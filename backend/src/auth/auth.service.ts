@@ -17,6 +17,11 @@ export class AuthService {
         email: signupUserDto.email,
         password: hash,
       },
+      select: {
+        id: true,
+        email: true,
+        fullname: true,
+      },
     });
   }
 
