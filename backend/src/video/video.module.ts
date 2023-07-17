@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
     PrismaModule,
     MulterModule.register({
       storage: diskStorage({
-        destination: './public',
+        destination: './public/videos',
         filename: (req, file, callback) => {
           const ext = file.mimetype.split('/')[1];
           callback(null, `${uuidv4()}-${Date.now()}.${ext}`);

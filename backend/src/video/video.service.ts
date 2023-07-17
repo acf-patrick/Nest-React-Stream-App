@@ -2,6 +2,7 @@ import {
   BadRequestException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PostVideoDto } from './dto/post-video.dto';
 import { createReadStream, statSync } from 'fs';
 import { join } from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class VideoService {
@@ -62,7 +64,7 @@ export class VideoService {
       const { range } = req.headers;
       if (range) {
         const { video } = data;
-        const videoPath = join(process.cwd(), `./public/${video}`);
+        const videoPath = join(process.cwd(), `./public/videos/${video}`);
         const videoInfo = statSync(videoPath);
         const CHUNK_SIZE = 1e6; // 1Mb
         const start = Number(range.replace(/\D/g, ''));
@@ -99,6 +101,20 @@ export class VideoService {
   }
 
   async delete(id: string) {
+    const video = await this.prisma.video.findUnique({ where: { id } });
+    if (!video) {
+      throw new NotFoundException(`Video with ID ${id} not found`);
+    }
+
+    [video.video, video.coverImage].forEach((path) => {
+      fs.unlink(join(process.cwd(), `./public/videos/${path}`), (err) => {
+        if (err) {
+          console.error(err);
+          throw new InternalServerErrorException(err);
+        }
+      });
+    });
+
     await this.prisma.video.delete({ where: { id } });
   }
 }
