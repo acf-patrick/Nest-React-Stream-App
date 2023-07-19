@@ -1,7 +1,16 @@
-import { styled } from "styled-components";
+import { keyframes, styled } from "styled-components";
 import { useNavigate, Link } from "react-router-dom";
 import { Logo } from "../../components";
 import api from "../../api";
+import { useState } from "react";
+
+const errorShowing = keyframes`
+  from {
+    opacity: 0;
+  } to {
+    opacity: 1;
+  }
+`;
 
 const Container = styled.div`
   width: 100vw;
@@ -90,9 +99,17 @@ const Card = styled.div`
     justify-content: space-between;
     font-size: 0.75rem;
   }
+
+  .error {
+    color: red;
+    text-align: center;
+    margin-top: 1rem;
+    animation: ${errorShowing} 250ms both;
+  }
 `;
 
 function Login() {
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const formOnSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -111,6 +128,8 @@ function Login() {
       })
       .catch((err) => {
         console.error(err);
+        const message = err.response.data.message;
+        setError(message);
       });
   };
 
@@ -138,6 +157,7 @@ function Login() {
             <Link to="/signup">Not registered ?</Link>
             <a href="#">Forgot password ?</a>
           </div>
+          {error.length > 0 && <p className="error">{error}</p>}
           <div className="submit-btn">
             <button type="submit">login</button>
           </div>
