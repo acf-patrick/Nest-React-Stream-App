@@ -2,6 +2,8 @@ import { ThemeProvider } from "styled-components";
 import themes from "./styles/themes";
 import ThemeContext from "./contexts/theme";
 import { useState } from "react";
+import router from "./router";
+import { RouterProvider } from "react-router-dom";
 
 function App() {
   const [theme, setTheme] = useState<"dark" | "light">("light");
@@ -15,7 +17,7 @@ function App() {
       }}
     >
       <ThemeProvider theme={theme === "light" ? themes.light : themes.dark}>
-        hello world
+        <RouterProvider router={router} />
       </ThemeProvider>
     </ThemeContext.Provider>
   );
