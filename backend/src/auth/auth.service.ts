@@ -33,11 +33,16 @@ export class AuthService {
     });
 
     if (user) {
-      if (bcrypt.compare(password, user.password)) {
-        const payload = { email };
-        return {
-          token: this.jwt.sign(payload),
-        };
+      try {
+        const res = await bcrypt.compare(password, user.password);
+        if (res) {
+          const payload = { email };
+          return {
+            token: this.jwt.sign(payload),
+          };
+        }
+      } catch (e) {
+        console.error(e);
       }
     }
 

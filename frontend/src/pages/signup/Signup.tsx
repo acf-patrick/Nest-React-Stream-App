@@ -135,17 +135,26 @@ function Signup() {
     if (!passwordMismatch) {
       const formData = new FormData(e.currentTarget);
 
-      api
-        .post("/video", {
+      const signup = async () => {
+        await api.post("/auth/signup", {
           fullname:
             formData.get("first-name") + " " + formData.get("last-name"),
           email: formData.get("email"),
           password: formData.get("password"),
-        })
-        .then(() => {})
-        .catch((err) => {
-          console.error(err);
         });
+
+        const res = await api.post("/auth/signin", {
+          email: formData.get("email"),
+          password: formData.get("password"),
+        });
+
+        localStorage.setItem("token", res.data.token);
+        navigate("/dashboard");
+      };
+
+      signup().catch((err) => {
+        console.error(err);
+      });
     }
   };
 

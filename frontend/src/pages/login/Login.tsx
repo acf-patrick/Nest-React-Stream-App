@@ -1,6 +1,7 @@
 import { styled } from "styled-components";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Logo } from "../../components";
+import api from "../../api";
 
 const Container = styled.div`
   width: 100vw;
@@ -63,7 +64,7 @@ const Card = styled.div`
     text-transform: uppercase;
     font-size: 1rem;
     transition: transform 350ms, box-shadow 350ms;
-    
+
     &:hover {
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
       transform: translateY(-5px);
@@ -92,8 +93,25 @@ const Card = styled.div`
 `;
 
 function Login() {
+  const navigate = useNavigate();
+
   const formOnSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    api
+      .post("/auth/signin", {
+        email: formData.get("email"),
+        password: formData.get("password"),
+      })
+      .then((res) => {
+        const { token } = res.data;
+        localStorage.setItem("token", token);
+        navigate("/dashboard");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   return (
@@ -107,10 +125,14 @@ function Login() {
         </p>
         <form onSubmit={formOnSubmit}>
           <p>
-            <input type="email" placeholder="Your email" />
+            <input type="email" name="email" placeholder="Your email" />
           </p>
           <p>
-            <input type="password" placeholder="Your password" />
+            <input
+              type="password"
+              name="password"
+              placeholder="Your password"
+            />
           </p>
           <div className="buttons">
             <Link to="/signup">Not registered ?</Link>
