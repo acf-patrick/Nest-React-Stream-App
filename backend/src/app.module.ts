@@ -13,6 +13,7 @@ import { VideoModule } from './video/video.module';
 import { UserModule } from './user/user.module';
 import { AuthenticationMiddleware } from './app.middleware';
 import { VideoController } from './video/video.controller';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { VideoController } from './video/video.controller';
     AuthModule,
     VideoModule,
     UserModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

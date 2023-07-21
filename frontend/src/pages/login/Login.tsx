@@ -155,7 +155,7 @@ function Login() {
           </p>
           <div className="buttons">
             <Link to="/signup">Not registered ?</Link>
-            <a href="#">Forgot password ?</a>
+            <Link to="/forgot-password">Forgot password ?</Link>
           </div>
           {error.length > 0 && <p className="error">{error}</p>}
           <div className="submit-btn">
