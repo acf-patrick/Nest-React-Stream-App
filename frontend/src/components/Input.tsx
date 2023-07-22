@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useRef } from "react";
+import React, { useRef } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -23,6 +23,7 @@ const Container = styled.div`
   }
 
   label.outside {
+    color: ${({ theme }) => theme.colors.primary};
     transform: translateY(-0.5rem);
   }
 `;
@@ -33,9 +34,10 @@ type InputProps = {
   type?: string;
   id?: string;
   onChange?: (value: string) => void;
+  inputRef?: React.RefObject<HTMLInputElement>;
 };
 
-function Input({ name, type, label, onChange, id }: InputProps) {
+function Input({ name, inputRef, type, label, onChange, id }: InputProps) {
   const labelRef = useRef<HTMLLabelElement>(null);
 
   const inputOnFocus: React.FocusEventHandler<HTMLInputElement> = (e) => {
@@ -61,6 +63,7 @@ function Input({ name, type, label, onChange, id }: InputProps) {
   return (
     <Container>
       <input
+        ref={inputRef}
         type={type || "text"}
         name={name}
         id={id}

@@ -54,33 +54,20 @@ const Card = styled.div`
     display: grid;
     gap: 2rem;
     grid-template-columns: 1fr 1fr;
+  }
 
-    div {
-      display: flex;
-      flex-direction: column;
-    }
-
-    input {
-      border: none;
-      outline: none;
-      background: transparent;
-      border-bottom: 1px solid ${({ theme }) => theme.colors.secondaryVariant};
-      padding: 1rem 0;
-
-      &::placeholder {
-        color: ${({ theme }) => theme.colors.primary};
-        font-weight: bold;
-      }
-    }
-
-    label {
-      color: ${({ theme }) => theme.colors.secondaryVariant};
-    }
+  .confirm-pwd {
+    position: relative;
   }
 
   .error {
     color: red;
     animation: ${errorShowing} 500ms both;
+    margin: unset;
+    font-size: 0.95rem;
+    position: absolute;
+    top: -0.75rem;
+    right: 0;
   }
 
   .submit-btn {
@@ -152,7 +139,6 @@ function Signup() {
   const passwordInputOnChange = () => {
     const password = passwordRef.current;
     const confirmPassword = confirmPasswordRef.current;
-
     if (password && confirmPassword) {
       const value = confirmPassword.value;
       if (value) {
@@ -173,24 +159,8 @@ function Signup() {
           <p>Create your account</p>
           <form onSubmit={formOnSubmit}>
             <div className="names">
-              <div>
-                <label htmlFor="first-name">First Name</label>
-                <input
-                  type="text"
-                  placeholder="Name"
-                  name="first-name"
-                  id="first-name"
-                />
-              </div>
-              <div>
-                <label htmlFor="last-name">Last Name</label>
-                <input
-                  type="text"
-                  placeholder="Name"
-                  name="last-name"
-                  id="last-name"
-                />
-              </div>
+              <Input label="First Name" name="first-name" id="first_name" />
+              <Input label="Last Name" name="last-name" id="last_name" />
             </div>
             <Input label="Email" name="email" id="email" type="email" />
             <Input
@@ -198,15 +168,21 @@ function Signup() {
               name="password"
               id="password"
               type="password"
+              inputRef={passwordRef}
             />
-            {passwordMismatch && <p className="error">Passwords don't match</p>}
-            <Input
-              label="Confirm password"
-              name=""
-              id="confirm_passowrd"
-              type="password"
-              onChange={passwordInputOnChange}
-            />
+            <div className="confirm-pwd">
+              {passwordMismatch && (
+                <p className="error">Passwords don't match</p>
+              )}
+              <Input
+                label="Confirm password"
+                name=""
+                id="confirm_passowrd"
+                type="password"
+                onChange={passwordInputOnChange}
+                inputRef={confirmPasswordRef}
+              />
+            </div>
             <div className="submit-btn">
               <button type="submit">Register</button>
             </div>
