@@ -1,5 +1,5 @@
 import { keyframes, styled } from "styled-components";
-import { Logo } from "../../components";
+import { Logo, Input } from "../../components";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
@@ -33,38 +33,15 @@ const Card = styled.div`
     margin-bottom: 2rem;
   }
 
+  input {
+    border-bottom: 1px solid ${({ theme }) => theme.colors.secondaryVariant};
+  }
+
   form {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 1rem;
-
-    & > div:not(.names) {
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
-  input {
-    border: none;
-    outline: none;
-    background: transparent;
-    border-bottom: 1px solid ${({ theme }) => theme.colors.secondaryVariant};
-    padding: 1rem 0;
-
-    &::placeholder {
-      color: ${({ theme }) => theme.colors.primary};
-      font-weight: bold;
-    }
-  }
-
-  label {
-    color: ${({ theme }) => theme.colors.secondaryVariant};
-  }
-
-  label[for="confirm_password"] {
-    display: flex;
-    justify-content: space-between;
+    gap: 1.5rem;
   }
 
   .inner {
@@ -82,6 +59,23 @@ const Card = styled.div`
       display: flex;
       flex-direction: column;
     }
+
+    input {
+      border: none;
+      outline: none;
+      background: transparent;
+      border-bottom: 1px solid ${({ theme }) => theme.colors.secondaryVariant};
+      padding: 1rem 0;
+
+      &::placeholder {
+        color: ${({ theme }) => theme.colors.primary};
+        font-weight: bold;
+      }
+    }
+
+    label {
+      color: ${({ theme }) => theme.colors.secondaryVariant};
+    }
   }
 
   .error {
@@ -91,6 +85,7 @@ const Card = styled.div`
 
   .submit-btn {
     padding-top: 0.75rem;
+    display: flex;
     flex-direction: row !important;
     justify-content: center;
 
@@ -197,31 +192,21 @@ function Signup() {
                 />
               </div>
             </div>
-            <div>
-              <label htmlFor="email">Email</label>
-              <input type="email" name="email" id="email" />
-            </div>
-            <div>
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                ref={passwordRef}
-              />
-            </div>
+            <Input label="Email" name="email" id="email" type="email" />
+            <Input
+              label="Password"
+              name="password"
+              id="password"
+              type="password"
+            />
             {passwordMismatch && <p className="error">Passwords don't match</p>}
-            <div>
-              <label htmlFor="confirm_password">
-                <span>Confirm password</span>
-              </label>
-              <input
-                type="password"
-                id="confirm_password"
-                onChange={passwordInputOnChange}
-                ref={confirmPasswordRef}
-              />
-            </div>
+            <Input
+              label="Confirm password"
+              name=""
+              id="confirm_passowrd"
+              type="password"
+              onChange={passwordInputOnChange}
+            />
             <div className="submit-btn">
               <button type="submit">Register</button>
             </div>

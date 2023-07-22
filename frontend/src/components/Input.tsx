@@ -32,9 +32,10 @@ type InputProps = {
   label: string;
   type?: string;
   id?: string;
+  onChange?: (value: string) => void;
 };
 
-function Input({ name, type, label, id }: InputProps) {
+function Input({ name, type, label, onChange, id }: InputProps) {
   const labelRef = useRef<HTMLLabelElement>(null);
 
   const inputOnFocus: React.FocusEventHandler<HTMLInputElement> = (e) => {
@@ -60,14 +61,19 @@ function Input({ name, type, label, id }: InputProps) {
   return (
     <Container>
       <input
-        type={type}
+        type={type || "text"}
         name={name}
         id={id}
         required
         onFocus={inputOnFocus}
         onBlur={inputOnBlur}
+        onChange={(e) => {
+          if (onChange) {
+            onChange(e.currentTarget.value);
+          }
+        }}
       />
-      <label htmlFor="email" ref={labelRef}>
+      <label htmlFor={id} ref={labelRef}>
         {label}
       </label>
     </Container>
