@@ -26,10 +26,6 @@ const Card = styled.div`
   padding: 0;
   display: grid;
   place-items: center;
-  /* display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center; */
 
   p {
     font-size: 1.5rem;
@@ -214,12 +210,10 @@ function Signup() {
                 ref={passwordRef}
               />
             </div>
+            {passwordMismatch && <p className="error">Passwords don't match</p>}
             <div>
               <label htmlFor="confirm_password">
                 <span>Confirm password</span>
-                {passwordMismatch && (
-                  <span className="error">Passwords don't match</span>
-                )}
               </label>
               <input
                 type="password"
