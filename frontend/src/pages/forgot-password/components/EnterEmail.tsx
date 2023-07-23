@@ -1,14 +1,13 @@
 import { BsArrowLeft, BsFingerprint } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Pagination from "./Pagination";
 import Icon from "./Icon";
 import { Input } from "../../../components";
+import Button from "./Button";
+import Title from "./Title";
 import api from "../../../api";
 
-const Title = styled.h1`
-  margin: unset;
-`;
 
 const Form = styled.form`
   .buttons {
@@ -16,20 +15,6 @@ const Form = styled.form`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-
-    button {
-      padding: 0.5rem 0;
-      cursor: pointer;
-      border: none;
-      outline: none;
-      color: ${({ theme }) => theme.colors.opposite};
-      background: ${({ theme }) => theme.colors.primary};
-      transition: background 500ms;
-
-      &:hover {
-        background: ${({ theme }) => theme.colors.secondary};
-      }
-    }
 
     a {
       color: ${({ theme }) => theme.colors.secondary};
@@ -42,9 +27,16 @@ const Form = styled.form`
 `;
 
 function EnterEmail() {
+  const navigate = useNavigate();
+
   const formOnSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const email: string = e.currentTarget.email.value;
+    navigate("/forgot-password/2", {
+      state: {
+        email,
+      },
+    });
   };
 
   return (
@@ -57,7 +49,7 @@ function EnterEmail() {
       <Form onSubmit={formOnSubmit}>
         <Input name="email" id="email" type="email" label="Enter your email" />
         <div className="buttons">
-          <button type="submit">Reset password</button>
+          <Button type="submit">Reset password</Button>
           <Link to="/">
             <BsArrowLeft />
             <span>Back to log in</span>

@@ -12,12 +12,15 @@ import {
   HttpCode,
   Param,
   Query,
+  UseFilters,
 } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { PostVideoDto } from './dto/post-video.dto';
+import { PrismaClientExceptionFilter } from 'src/prisma-client-exception/prisma-client-exception.filter';
 
 @Controller('/api/v1/video')
+@UseFilters(PrismaClientExceptionFilter)
 export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
