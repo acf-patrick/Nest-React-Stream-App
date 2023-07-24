@@ -20,6 +20,7 @@ const Container = styled.div`
     transform: translateY(1rem);
     transition: transform 250ms;
     cursor: text;
+    user-select: none;
   }
 
   label.outside {
