@@ -151,6 +151,7 @@ function ResetPassword() {
       <Form onSubmit={formOnSubmit}>
         <div className="input" ref={inputContainerRef}>
           <input
+            autoComplete="off"
             type="text"
             maxLength={1}
             name="0"
@@ -159,6 +160,7 @@ function ResetPassword() {
             onPaste={inputOnPaste}
           />
           <input
+            autoComplete="off"
             type="text"
             maxLength={1}
             name="1"
@@ -167,6 +169,7 @@ function ResetPassword() {
             onPaste={inputOnPaste}
           />
           <input
+            autoComplete="off"
             type="text"
             maxLength={1}
             name="2"
@@ -175,6 +178,7 @@ function ResetPassword() {
             onPaste={inputOnPaste}
           />
           <input
+            autoComplete="off"
             type="text"
             maxLength={1}
             name="3"

@@ -4,6 +4,7 @@ import { AuthController } from './auth.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { MailModule } from 'src/mail/mail.module';
+import { ResetPasswordService } from './reset-password.service';
 
 const jwtModule = JwtModule.register({
   secret: process.env.JWT_SECRET,
@@ -12,7 +13,7 @@ const jwtModule = JwtModule.register({
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, ResetPasswordService],
   imports: [PrismaModule, jwtModule, MailModule],
   exports: [jwtModule],
 })
