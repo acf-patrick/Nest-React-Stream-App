@@ -43,6 +43,7 @@ const Form = styled.form`
 function SetNewPassword() {
   const location = useLocation();
   const [code, _] = useState<string>(location.state?.code);
+  console.log(code);
 
   return (
     <>

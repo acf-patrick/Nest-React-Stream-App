@@ -115,6 +115,12 @@ function ResetPassword() {
       input.value = "";
     } else {
       input.classList.toggle("filled");
+
+      const nextInput = input.nextElementSibling;
+      if (nextInput) {
+        const input = nextInput as HTMLInputElement;
+        input.focus();
+      }
     }
 
     if (input.value === "") {
@@ -151,6 +157,7 @@ function ResetPassword() {
       <Form onSubmit={formOnSubmit}>
         <div className="input" ref={inputContainerRef}>
           <input
+            required
             autoComplete="off"
             type="text"
             maxLength={1}
@@ -160,6 +167,7 @@ function ResetPassword() {
             onPaste={inputOnPaste}
           />
           <input
+            required
             autoComplete="off"
             type="text"
             maxLength={1}
@@ -169,6 +177,7 @@ function ResetPassword() {
             onPaste={inputOnPaste}
           />
           <input
+            required
             autoComplete="off"
             type="text"
             maxLength={1}
@@ -178,6 +187,7 @@ function ResetPassword() {
             onPaste={inputOnPaste}
           />
           <input
+            required
             autoComplete="off"
             type="text"
             maxLength={1}
