@@ -8,22 +8,34 @@ import Title from "./Title";
 import Button from "./Button";
 import Pagination from "./Pagination";
 import { Input } from "../../../components";
+import api from "../../../api";
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 
-  p {
-    margin: unset;
-    color: ${({ theme }) => theme.colors.secondary};
-  }
-
   button {
     margin: 0.5rem 0;
   }
 
-  p.back {
+  .error {
+    color: red;
+    position: relative;
+    margin-bottom: 0.5rem;
+
+    p {
+      margin: unset;
+      position: absolute;
+      top: 0;
+      font-size: 0.75rem;
+    }
+  }
+
+  .back {
+    margin: unset;
+    color: ${({ theme }) => theme.colors.secondary};
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,7 +55,16 @@ const Form = styled.form`
 function SetNewPassword() {
   const location = useLocation();
   const [code, _] = useState<string>(location.state?.code);
-  console.log(code);
+  const [error, setError] = useState("");
+
+  const formOnSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    api.post("/user/password", {
+      code,
+      password: data.get("password"),
+    });
+  };
 
   return (
     <>
@@ -51,14 +72,35 @@ function SetNewPassword() {
         <MdOutlinePassword />
       </Icon>
       <Title>Set new password</Title>
-      <Form>
-        <p>Must be at least 8 characters.</p>
-        <Input label="Password" name="password" id="password" type="password" />
+      <Form onSubmit={formOnSubmit}>
+        <div className="error">{error && <p>Passwords don't match</p>}</div>
+        <Input
+          label="Password"
+          name="password"
+          id="password"
+          type="password"
+          onChange={() => {
+            setError("");
+          }}
+        />
         <Input
           label="Confirm password"
           name="confirm-password"
           id="confirm_password"
           type="password"
+          onChange={(value) => {
+            const input = document.querySelector(
+              "#password"
+            ) as HTMLInputElement;
+
+            if (value) {
+              if (value !== input.value) {
+                setError("Passwords don't match.");
+              } else {
+                setError("");
+              }
+            }
+          }}
         />
         <Button type="submit">Reset password</Button>
         <p className="back">

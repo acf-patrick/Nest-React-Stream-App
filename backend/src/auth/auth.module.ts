@@ -15,6 +15,6 @@ const jwtModule = JwtModule.register({
   controllers: [AuthController],
   providers: [AuthService, ResetPasswordService],
   imports: [PrismaModule, jwtModule, MailModule],
-  exports: [jwtModule],
+  exports: [jwtModule, ResetPasswordService],
 })
 export class AuthModule {}

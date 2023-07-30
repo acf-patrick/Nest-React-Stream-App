@@ -1,4 +1,5 @@
 import { BsArrowLeft, BsFingerprint } from "react-icons/bs";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Pagination from "./Pagination";
@@ -7,7 +8,6 @@ import { Input } from "../../../components";
 import Button from "./Button";
 import Title from "./Title";
 import api from "../../../api";
-
 
 const Form = styled.form`
   .buttons {
@@ -24,19 +24,35 @@ const Form = styled.form`
       gap: 0.5rem;
     }
   }
+
+  .error {
+    color: red;
+  }
 `;
 
 function EnterEmail() {
   const navigate = useNavigate();
+  const [error, setError] = useState("");
 
   const formOnSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const email: string = e.currentTarget.email.value;
-    navigate("/forgot-password/2", {
-      state: {
+
+    api
+      .post("/auth/reset-password", {
         email,
-      },
-    });
+      })
+      .then(() => {
+        navigate("/forgot-password/2", {
+          state: {
+            email,
+          },
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err.response.data.message);
+      });
   };
 
   return (
@@ -47,7 +63,15 @@ function EnterEmail() {
       <Title>Forgot password?</Title>
       <p>Don't panic, we'll send you reset instructions.</p>
       <Form onSubmit={formOnSubmit}>
-        <Input name="email" id="email" type="email" label="Enter your email" />
+        <Input
+          name="email"
+          id="email"
+          type="email"
+          label="Enter your email"
+          onChange={() => {
+            setError("");
+          }}
+        />
         <div className="buttons">
           <Button type="submit">Reset password</Button>
           <Link to="/">
@@ -55,6 +79,7 @@ function EnterEmail() {
             <span>Back to log in</span>
           </Link>
         </div>
+        {error && <p className="error">{error}</p>}
       </Form>
       <Pagination active={1} />
     </>

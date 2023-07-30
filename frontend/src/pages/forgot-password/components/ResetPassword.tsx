@@ -8,6 +8,7 @@ import Button from "./Button";
 import Title from "./Title";
 import Pagination from "./Pagination";
 import { styled } from "styled-components";
+import api from "../../../api";
 
 const Text = styled.p`
   color: ${({ theme }) => theme.colors.primary};
@@ -42,6 +43,7 @@ const Form = styled.form`
 
   p {
     text-align: center;
+    margin: unset;
     color: ${({ theme }) => theme.colors.secondary};
   }
 
@@ -71,6 +73,11 @@ const Form = styled.form`
     }
   }
 
+  .error {
+    text-align: start;
+    color: red;
+  }
+
   input.filled {
     box-shadow: 0 0 3px ${({ theme }) => theme.colors.primary};
   }
@@ -87,6 +94,7 @@ const Form = styled.form`
 function ResetPassword() {
   const location = useLocation();
   const [email, _] = useState<string>(location.state?.email);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const inputContainerRef = useRef<HTMLDivElement>(null);
 
@@ -98,15 +106,32 @@ function ResetPassword() {
       code += datas.get(`${i}`)?.toString();
     }
 
-    navigate("/forgot-password/3", {
-      state: {
-        email,
-        code,
-      },
-    });
+    api
+      .post("/auth/validate-code", { code })
+      .then(() => {
+        navigate("/forgot-password/3", {
+          state: {
+            email,
+            code,
+          },
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err.response.data.message);
+      });
   };
 
-  const resendBtnOnClick = () => {};
+  const resendBtnOnClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    api
+      .post("/auth/reset-password", {
+        email,
+      })
+      .then(() => {
+        setError("Check your mailbox.");
+      });
+  };
 
   const inputOnInput: React.FormEventHandler<HTMLInputElement> = (e) => {
     const input = e.currentTarget;
@@ -165,6 +190,7 @@ function ResetPassword() {
             id="0"
             onInput={inputOnInput}
             onPaste={inputOnPaste}
+            onFocus={() => setError("")}
           />
           <input
             required
@@ -175,6 +201,7 @@ function ResetPassword() {
             id="1"
             onInput={inputOnInput}
             onPaste={inputOnPaste}
+            onFocus={() => setError("")}
           />
           <input
             required
@@ -185,6 +212,7 @@ function ResetPassword() {
             id="2"
             onInput={inputOnInput}
             onPaste={inputOnPaste}
+            onFocus={() => setError("")}
           />
           <input
             required
@@ -195,9 +223,11 @@ function ResetPassword() {
             id="3"
             onInput={inputOnInput}
             onPaste={inputOnPaste}
+            onFocus={() => setError("")}
           />
         </div>
         <Button type="submit">Continue</Button>
+        {error && <p className="error">{error}</p>}
         <p>
           Didn't receive the mail?{" "}
           <button onClick={resendBtnOnClick} className="resend">

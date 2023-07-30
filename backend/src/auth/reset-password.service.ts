@@ -9,10 +9,20 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ResetPasswordService {
   codes: Record<string, string>; // code -> email
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+    this.codes = {};
+  }
 
   validateCode(code: string) {
     return code in this.codes;
+  }
+
+  getAssociatedEmail(code: string) {
+    if (this.validateCode(code)) {
+      return this.codes[code];
+    }
+
+    return '';
   }
 
   async generateCode(email: string) {
