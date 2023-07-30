@@ -102,7 +102,7 @@ function SetNewPassword() {
             }
           }}
         />
-        <Button type="submit">Reset password</Button>
+        <Button type="submit">Reset password </Button>
         <p className="back">
           <BsArrowLeft />
           <Link to="/">

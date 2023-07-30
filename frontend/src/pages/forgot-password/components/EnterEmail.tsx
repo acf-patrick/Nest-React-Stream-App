@@ -1,13 +1,22 @@
 import { BsArrowLeft, BsFingerprint } from "react-icons/bs";
+import { AiOutlineLoading } from "react-icons/ai";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Pagination from "./Pagination";
 import Icon from "./Icon";
 import { Input } from "../../../components";
 import Button from "./Button";
 import Title from "./Title";
 import api from "../../../api";
+
+const rotate = keyframes`
+  from {
+    transform: rotate(360deg);
+  } to {
+    transform: rotate(0deg);
+  }
+`;
 
 const Form = styled.form`
   .buttons {
@@ -22,6 +31,24 @@ const Form = styled.form`
       justify-content: center;
       align-items: center;
       gap: 0.5rem;
+    }
+
+    button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+
+      svg {
+        display: none;
+        animation: ${rotate} 750ms both linear infinite;
+      }
+    }
+
+    button[disabled] {
+      svg {
+        display: block;
+      }
     }
   }
 
@@ -38,6 +65,11 @@ function EnterEmail() {
     e.preventDefault();
     const email: string = e.currentTarget.email.value;
 
+    const btn = document.querySelector(
+      "button[type=submit]"
+    ) as HTMLButtonElement;
+    btn.disabled = true;
+
     api
       .post("/auth/reset-password", {
         email,
@@ -51,6 +83,7 @@ function EnterEmail() {
       })
       .catch((err) => {
         console.error(err);
+        btn.disabled = false;
         setError(err.response.data.message);
       });
   };
@@ -73,7 +106,10 @@ function EnterEmail() {
           }}
         />
         <div className="buttons">
-          <Button type="submit">Reset password</Button>
+          <Button type="submit">
+            <span>Reset password</span>
+            <AiOutlineLoading />
+          </Button>
           <Link to="/">
             <BsArrowLeft />
             <span>Back to log in</span>
