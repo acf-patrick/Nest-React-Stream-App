@@ -18,12 +18,12 @@ export class UserController {
   ) {}
 
   @Get(':email')
-  async getOneUser(@Param() email: string) {
+  async getOneUser(@Param('email') email: string) {
     const user = await this.userService.getOne(email);
     if (user) {
       return user;
     }
-    throw new NotFoundException(`Not user found with email ${email}`);
+    throw new NotFoundException(`No user found with email ${email}`);
   }
 
   @Post('/password')

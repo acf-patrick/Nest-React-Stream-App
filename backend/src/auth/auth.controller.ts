@@ -72,19 +72,4 @@ export class AuthController {
     const { token } = await this.authService.signin(user.email, user.password);
     return { token };
   }
-
-  @Post('/mail')
-  async testMail(@Body() dto: { email: string; body: string }) {
-    try {
-      await this.mailService.sendMail({
-        to: dto.email,
-        subject: 'test streamly',
-        html: dto.body,
-      });
-      return 'Mail sent!';
-    } catch (e) {
-      console.error(e);
-      throw new ServiceUnavailableException(e);
-    }
-  }
 }

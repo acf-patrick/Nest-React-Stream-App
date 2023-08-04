@@ -1,4 +1,5 @@
 .env
+public/videos/
 
 # compiled output
 /dist
