@@ -15,6 +15,7 @@ model User {
   fullname    String
   email       String   @unique
   password    String
+  avatar      String?
   createdDate DateTime @default(now())
   Video       Video[]
 }

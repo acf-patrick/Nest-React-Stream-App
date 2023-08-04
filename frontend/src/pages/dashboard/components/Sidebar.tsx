@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import { AiFillCompass, AiTwotoneHeart } from "react-icons/ai";
-import { BsGearFill } from "react-icons/bs";
+import { AiTwotoneHeart } from "react-icons/ai";
+import { FaRegCompass } from "react-icons/fa";
+import { BsGear } from "react-icons/bs";
 import { IoExitOutline } from "react-icons/io5";
 import { useState } from "react";
 import { Logo } from "../../../components";
@@ -36,7 +37,7 @@ const Container = styled.nav`
   }
 
   .section > p {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: bold;
     padding-left: 1.75rem;
     color: ${({ theme }) => theme.colors.secondaryVariant};
@@ -98,7 +99,7 @@ function Sidebar() {
           label: "My Videos",
         },
         {
-          icon: <AiFillCompass />,
+          icon: <FaRegCompass />,
           label: "Explore",
           to: "",
         },
@@ -109,7 +110,7 @@ function Sidebar() {
       links: [
         {
           label: "Settings",
-          icon: <BsGearFill />,
+          icon: <BsGear />,
         },
         {
           label: "Log out",

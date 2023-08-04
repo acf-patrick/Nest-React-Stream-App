@@ -1,5 +1,5 @@
 .env
-public/videos/
+public/*
 
 # compiled output
 /dist
