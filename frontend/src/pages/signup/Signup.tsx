@@ -95,7 +95,7 @@ const Card = styled.div`
 `;
 
 const Image = styled.div`
-  background: url(/images/signup-bg.jpg);
+  background: url(/images/backgrounds/signup-bg.jpg);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

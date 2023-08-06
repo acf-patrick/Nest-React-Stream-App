@@ -6,16 +6,17 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async getOne(email: string) {
+  async getOne(id: string) {
     return await this.prisma.user.findUnique({
       where: {
-        email,
+        id,
       },
       select: {
         email: true,
         fullname: true,
-        id: true
-      }
+        id: true,
+        avatar: true,
+      },
     });
   }
 

@@ -17,13 +17,14 @@ export class UserController {
     private codeService: ResetPasswordService,
   ) {}
 
-  @Get(':email')
-  async getOneUser(@Param('email') email: string) {
-    const user = await this.userService.getOne(email);
+  @Get(':id')
+  async getUser(@Param('id') id: string) {
+    const user = await this.userService.getOne(id);
     if (user) {
       return user;
     }
-    throw new NotFoundException(`No user found with email ${email}`);
+
+    throw new NotFoundException(`No user found with ID ${id}`);
   }
 
   @Post('/password')

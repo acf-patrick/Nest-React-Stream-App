@@ -38,7 +38,6 @@ const Container = styled.nav`
 
   .section > p {
     font-size: 0.75rem;
-    font-weight: bold;
     padding-left: 1.75rem;
     color: ${({ theme }) => theme.colors.secondaryVariant};
   }
@@ -59,9 +58,18 @@ const Link = styled.li<{ $active: boolean }>`
   background: transparent;
   transition: background 250ms;
 
-  & > * {
+  & > a {
     color: ${({ theme, $active }) =>
-      $active ? theme.colors.quaternary : theme.colors.secondary} !important;
+      $active
+        ? theme.colors.primary
+        : rgba(theme.colors.primary, 0.55)} !important;
+  }
+
+  & > svg {
+    color: ${({ theme, $active }) =>
+      $active
+        ? theme.colors.quaternary
+        : rgba(theme.colors.primary, 0.55)} !important;
   }
 
   &:hover {

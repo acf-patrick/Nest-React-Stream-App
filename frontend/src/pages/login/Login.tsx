@@ -19,7 +19,7 @@ const Container = styled.div`
 `;
 
 const Image = styled.div`
-  background: url(/images/login-bg.jpg);
+  background: url(/images/backgrounds/login-bg.jpg);
   background-size: cover;
   flex-grow: 1;
   min-width: 65%;
@@ -122,7 +122,8 @@ function Login() {
         password: formData.get("password"),
       })
       .then((res) => {
-        const { token } = res.data;
+        const { id, token } = res.data;
+        localStorage.setItem("userId", id);
         localStorage.setItem("token", token);
         navigate("/dashboard");
       })

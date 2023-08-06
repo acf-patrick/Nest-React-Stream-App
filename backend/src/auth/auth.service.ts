@@ -30,6 +30,10 @@ export class AuthService {
       where: {
         email,
       },
+      select: {
+        password: true,
+        id: true,
+      },
     });
 
     if (user) {
@@ -39,6 +43,7 @@ export class AuthService {
           const payload = { email };
           return {
             token: this.jwt.sign(payload),
+            id: user.id,
           };
         }
       } catch (e) {

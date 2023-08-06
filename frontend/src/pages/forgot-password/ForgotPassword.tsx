@@ -22,7 +22,7 @@ const Card = styled.div`
 `;
 
 const Image = styled.div`
-  background: url(/images/forgot-pwd-bg.jpg);
+  background: url(/images/backgrounds/forgot-pwd-bg.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
