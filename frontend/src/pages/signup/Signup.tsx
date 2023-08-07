@@ -127,7 +127,7 @@ function Signup() {
         });
 
         localStorage.setItem("token", res.data.token);
-        navigate("/dashboard");
+        navigate("/");
       };
 
       signup().catch((err) => {

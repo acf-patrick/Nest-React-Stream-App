@@ -125,7 +125,7 @@ function Login() {
         const { id, token } = res.data;
         localStorage.setItem("userId", id);
         localStorage.setItem("token", token);
-        navigate("/dashboard");
+        navigate("/");
       })
       .catch((err) => {
         console.error(err);

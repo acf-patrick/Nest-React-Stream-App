@@ -9,7 +9,7 @@ import {
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/login",
     element: <Login />,
     errorElement: <ErrorPage />,
   },
@@ -36,7 +36,7 @@ const router = createBrowserRouter([
     element: <Signup />,
   },
   {
-    path: "/dashboard",
+    path: "/",
     element: <Dashboard />,
   },
 ]);

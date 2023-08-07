@@ -34,6 +34,7 @@ const Container = styled.nav`
 
   a {
     color: ${({ theme }) => theme.colors.primary};
+    font-weight: 600;
   }
 
   .section > p {

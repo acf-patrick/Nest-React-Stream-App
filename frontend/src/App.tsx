@@ -4,6 +4,7 @@ import ThemeContext from "./contexts/theme";
 import { useState } from "react";
 import router from "./router";
 import { RouterProvider } from "react-router-dom";
+import GlobalStyles from "./styles/globalStyles";
 
 function App() {
   const [theme, setTheme] = useState<"dark" | "light">("light");
@@ -16,7 +17,13 @@ function App() {
         },
       }}
     >
-      <ThemeProvider theme={theme === "light" ? themes.light : themes.dark}>
+      <ThemeProvider
+        theme={{
+          ...themes,
+          colors: theme === "light" ? themes.colors.light : themes.colors.dark,
+        }}
+      >
+        <GlobalStyles />
         <RouterProvider router={router} />
       </ThemeProvider>
     </ThemeContext.Provider>

@@ -21,6 +21,9 @@ export class UserController {
   async getUser(@Param('id') id: string) {
     const user = await this.userService.getOne(id);
     if (user) {
+      if (user.avatar) {
+        user.avatar = `http://localhost:${process.env.PORT}/${user.avatar}`;
+      }
       return user;
     }
 

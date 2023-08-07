@@ -1,7 +1,7 @@
 const themes = {
-  light: {
-    colors: {
-      background: "#f0f0f0",
+  colors: {
+    light: {
+      background: "white",
       logo: "red",
       inputBg: "grey",
       placeholder: "rgba(255, 255, 255, 0.75)",
@@ -12,9 +12,7 @@ const themes = {
       tertiary: "#F5F5F5",
       quaternary: "#F05454",
     },
-  },
-  dark: {
-    colors: {
+    dark: {
       background: "#0f0f0f",
       logo: "red",
       inputBg: "grey",
@@ -26,6 +24,9 @@ const themes = {
       tertiary: "#F5F5F5",
       quaternary: "#F05454",
     },
+  },
+  sizes: {
+    inputWidth: "280px",
   },
 };
 
