@@ -26,7 +26,7 @@ const Container = styled.nav`
   align-items: stretch;
   padding-top: 1rem;
   border-right: 2px solid ${({ theme }) => rgba(theme.colors.secondary, 0.3)};
-
+  
   ul {
     list-style: none;
     padding: unset;
@@ -140,7 +140,7 @@ function Sidebar() {
         <div className="section" key={i}>
           <p>{section.label}</p>
           <ul>
-            {section.links.map((link) => (
+            {section.links.map((link, j) => (
               <Link key={link.label} $active={link.label === activeLink}>
                 {link.icon}
                 <a

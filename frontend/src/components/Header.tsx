@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import { keyframes, styled } from "styled-components";
 import { FiSearch } from "react-icons/fi";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { FaMoon, FaSun } from "react-icons/fa";
@@ -8,6 +8,26 @@ import { useEffect, useContext, useState } from "react";
 import { rgba } from "polished";
 import ThemeContext from "../contexts/theme";
 import api from "../api";
+
+const appears = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  } to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const nameAppears = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(50%);
+  } to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
 
 const Container = styled.nav`
   display: flex;
@@ -25,9 +45,11 @@ const Container = styled.nav`
     align-items: center;
     gap: 0.5rem;
     margin-right: 1.75rem;
+    animation: ${appears} 500ms both;
 
     & > * {
       cursor: pointer;
+      color: ${({ theme }) => theme.colors.primary};
     }
 
     button {
@@ -103,6 +125,11 @@ const Container = styled.nav`
       cursor: pointer;
       background: transparent;
       transition: background 250ms;
+      color: ${({ theme }) => theme.colors.primary};
+
+      &[disabled] {
+        color: ${({ theme }) => rgba(theme.colors.primary, 0.25)};
+      }
 
       &:hover {
         background: ${({ theme }) => rgba(theme.colors.primary, 0.125)};
@@ -123,12 +150,13 @@ const Container = styled.nav`
     .name {
       font-weight: bold;
       margin-left: 0.5rem;
+      animation: ${nameAppears} 500ms 750ms both;
     }
   }
 
   .profil {
     padding: 2px;
-    border: 2px solid black;
+    border: 2px solid ${({ theme }) => theme.colors.primary};
     border-radius: 10rem;
     display: grid;
     place-items: center;
@@ -201,7 +229,7 @@ function Header() {
         </div>
       </div>
       <div className="right">
-        <button className="incoming">
+        <button>
           <GoBell />
         </button>
         <button onClick={toggleTheme}>

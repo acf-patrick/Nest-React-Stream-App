@@ -18,7 +18,7 @@ const themes = {
       inputBg: "grey",
       placeholder: "rgba(255, 255, 255, 0.75)",
       opposite: "black",
-      primary: "#121212",
+      primary: "#bebebe",
       secondary: "#30475E",
       secondaryVariant: "#7899ba",
       tertiary: "#F5F5F5",
@@ -28,6 +28,7 @@ const themes = {
   sizes: {
     inputWidth: "280px",
   },
+  swipperTimeout: 750,
 };
 
 export default themes;

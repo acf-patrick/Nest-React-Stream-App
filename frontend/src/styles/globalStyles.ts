@@ -10,17 +10,19 @@ const GlobalStyle = createGlobalStyle`
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  color: ${({ theme }) => theme.colors.primary};
 }
 
 body {
   margin: 0;
   padding: 0;
-  background: ${({ theme }) => theme.colors.background};
+  overflow: hidden;
+  position: relative;
 }
 
 a {
   text-decoration: none;
-  color: black;
 }
 
 `;
