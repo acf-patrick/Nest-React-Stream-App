@@ -28,7 +28,7 @@ const themes = {
   sizes: {
     inputWidth: "280px",
   },
-  swipperTimeout: 750,
+  swipperTimeout: 1000,
 };
 
 export default themes;

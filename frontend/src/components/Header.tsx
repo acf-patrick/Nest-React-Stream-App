@@ -104,6 +104,8 @@ const Container = styled.nav`
       border: 1px solid ${({ theme }) => rgba(theme.colors.primary, 0.25)};
       border-radius: 1rem;
       min-width: ${({ theme }) => theme.sizes.inputWidth};
+      background: transparent;
+      color: ${({ theme }) => theme.colors.primary};
 
       &:focus {
         border: 1px solid ${({ theme }) => theme.colors.secondaryVariant};
