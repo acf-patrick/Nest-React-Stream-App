@@ -14,6 +14,7 @@ import { UserModule } from './user/user.module';
 import { AuthenticationMiddleware } from './app.middleware';
 import { VideoController } from './video/video.controller';
 import { MailModule } from './mail/mail.module';
+import { AuthController } from './auth/auth.controller';
 
 @Module({
   imports: [

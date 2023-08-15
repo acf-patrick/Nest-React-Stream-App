@@ -8,6 +8,11 @@ import {
   BadRequestException,
   NotAcceptableException,
   InternalServerErrorException,
+  Get,
+  Req,
+  Query,
+  Param,
+  Ip,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupUserDto } from './dto/signup-user.dto';
@@ -68,8 +73,31 @@ export class AuthController {
   }
 
   @Post('/signin')
-  async signin(@Body() dto: SigninUserDto) {
+  async signin(
+    @Req() req: Request,
+    @Body() dto: SigninUserDto,
+    @Ip() ip: string,
+  ) {
     const user = await this.authService.signin(dto.email, dto.password);
-    return user;
+
+    const userAgent = req.headers['user-agent'];
+    const refreshToken = this.authService.generateRefreshToken(
+      dto.email,
+      ip,
+      userAgent,
+    );
+
+    return {
+      ...user,
+      refreshToken,
+    };
+  }
+
+  @Get('/refresh/:refresh-token')
+  async refreshToken(
+    @Req() req: Request & { userId: string },
+    @Param('refresh-token') refreshtToken: string,
+  ) {
+    return 'ok';
   }
 }

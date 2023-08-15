@@ -3,6 +3,7 @@ import {
   NestMiddleware,
   UnauthorizedException,
   BadRequestException,
+  HttpException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { NextFunction, Request, Response } from 'express';
@@ -28,7 +29,7 @@ export class AuthenticationMiddleware implements NestMiddleware {
       ) {
         const token = req.headers.authorization.split(' ')[1];
         const { email } = await this.jwt.verify(token);
-        const user = await this.userService.getOne(email);
+        const user = await this.userService.getOneByEmail(email);
         if (user) {
           req.userId = user.id;
           next();
@@ -38,8 +39,10 @@ export class AuthenticationMiddleware implements NestMiddleware {
       } else {
         throw new BadRequestException('No token found');
       }
-    } catch {
-      throw new UnauthorizedException('Unauthorized');
+    } catch (e) {
+      if (!(e instanceof HttpException)) {
+        throw new UnauthorizedException(e.message);
+      }
     }
   }
 }

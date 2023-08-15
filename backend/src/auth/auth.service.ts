@@ -25,6 +25,20 @@ export class AuthService {
     });
   }
 
+  generateRefreshToken(email: string, ipAddress: string, userAgent: string) {
+    const refreshToken = this.jwt.sign(
+      {
+        ipAddress,
+        userAgent,
+        email,
+      },
+      {
+        expiresIn: '1d',
+      },
+    );
+    return refreshToken;
+  }
+
   async signin(email: string, password: string) {
     const user = await this.prisma.user.findUnique({
       where: {

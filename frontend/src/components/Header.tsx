@@ -197,11 +197,16 @@ function Header() {
           setUserName(name);
 
           if (user.avatar) {
-            setUserPicture(user.avatar);
+            fetch(user.avatar).then((res) => {
+              if (res.ok) {
+                setUserPicture(user.avatar);
+              }
+            });
           }
         })
         .catch((err) => {
           console.error(err);
+          navigate("/login");
         });
     } else {
       navigate("/login");
@@ -242,6 +247,7 @@ function Header() {
           <div className="profil">
             <div
               style={{
+                backgroundColor: "white",
                 backgroundImage: `url(${userPicture})`,
               }}
             ></div>

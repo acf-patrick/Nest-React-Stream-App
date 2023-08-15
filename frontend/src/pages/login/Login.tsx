@@ -122,9 +122,10 @@ function Login() {
         password: formData.get("password"),
       })
       .then((res) => {
-        const { id, token } = res.data;
+        const { id, token, refreshToken } = res.data;
         localStorage.setItem("userId", id);
         localStorage.setItem("token", token);
+        localStorage.setItem("refresh", refreshToken);
         navigate("/");
       })
       .catch((err) => {

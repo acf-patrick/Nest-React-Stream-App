@@ -20,6 +20,20 @@ export class UserService {
     });
   }
 
+  async getOneByEmail(email: string) {
+    return await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        email: true,
+        fullname: true,
+        id: true,
+        avatar: true,
+      },
+    });
+  }
+
   async setPassword(email: string, newPassword: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) {
