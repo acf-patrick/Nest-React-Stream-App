@@ -4,6 +4,7 @@
     "postinstall": "cd frontend && yarn && cd ../backend && yarn"
   },
   "devDependencies": {
+    "@types/passport": "^1.0.12",
     "concurrently": "^8.2.0"
   }
 }
