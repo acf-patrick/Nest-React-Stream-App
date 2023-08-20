@@ -126,7 +126,10 @@ function Signup() {
           password: formData.get("password"),
         });
 
-        localStorage.setItem("token", res.data.token);
+        const { id, token, refreshToken } = res.data;
+        localStorage.setItem("userId", id);
+        localStorage.setItem("token", token);
+        localStorage.setItem("refresh", refreshToken);
         navigate("/");
       };
 

@@ -19,10 +19,10 @@ import { VideoService } from './video.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { PostVideoDto } from './dto/post-video.dto';
 import { PrismaClientExceptionFilter } from 'src/prisma-client-exception/prisma-client-exception.filter';
-import { AuthGuard } from '@nestjs/passport';
+import { AccesTokenGuard } from 'src/auth/guards/acces-token.guard';
 
 @Controller('/api/v1/video')
-@UseGuards(AuthGuard())
+@UseGuards(AccesTokenGuard)
 @UseFilters(PrismaClientExceptionFilter)
 export class VideoController {
   constructor(private readonly videoService: VideoService) {}

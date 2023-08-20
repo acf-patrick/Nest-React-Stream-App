@@ -11,7 +11,8 @@ export class AuthService {
   async signup(signupUserDto: SignupUserDto) {
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(signupUserDto.password, salt);
-    return await this.prisma.user.create({
+
+    const user = await this.prisma.user.create({
       data: {
         fullname: signupUserDto.fullname,
         email: signupUserDto.email,
@@ -23,9 +24,74 @@ export class AuthService {
         fullname: true,
       },
     });
+    return user;
   }
 
-  generateRefreshToken(email: string, ipAddress: string, userAgent: string) {
+  async refreshTokens(refreshToken: string) {
+    const record = await this.prisma.refreshToken.findUnique({
+      where: { token: refreshToken },
+    });
+    if (!record) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    await this.prisma.refreshToken.deleteMany({
+      where: {
+        token: refreshToken,
+      },
+    });
+
+    const newRefreshToken = await this.generateRefreshToken(
+      record.email,
+      record.ipAddress,
+      record.userAgent,
+    );
+
+    const accessToken = await this.generateAccessToken(record.email);
+    return {
+      refreshToken,
+      accessToken,
+    };
+  }
+
+  async generateAccessToken(email: string) {
+    const token = await this.jwt.signAsync(
+      {
+        email,
+      },
+      {
+        expiresIn: '15m',
+      },
+    );
+    return token;
+  }
+
+  async invalidateRefreshToken(
+    email: string,
+    ipAddress: string,
+    userAgent: string,
+  ) {
+    try {
+      const res = await this.prisma.refreshToken.delete({
+        where: {
+          ipAddress_userAgent_email: {
+            ipAddress,
+            userAgent,
+            email,
+          },
+        },
+      });
+      return res;
+    } catch {
+      return null;
+    }
+  }
+
+  async generateRefreshToken(
+    email: string,
+    ipAddress: string,
+    userAgent: string,
+  ) {
     const refreshToken = this.jwt.sign(
       {
         ipAddress,
@@ -34,9 +100,36 @@ export class AuthService {
       },
       {
         expiresIn: '1d',
+        secret: process.env.REFRESH_SECRET,
       },
     );
-    return refreshToken;
+
+    let record = await this.prisma.refreshToken.findUnique({
+      where: {
+        ipAddress_userAgent_email: {
+          email,
+          userAgent,
+          ipAddress,
+        },
+      },
+    });
+    if (record) {
+      return record.token;
+    }
+
+    record = await this.prisma.refreshToken.create({
+      data: {
+        token: refreshToken,
+        ipAddress,
+        userAgent,
+        email,
+      },
+    });
+    if (record) {
+      return refreshToken;
+    }
+
+    return null;
   }
 
   async signin(email: string, password: string) {
@@ -54,9 +147,9 @@ export class AuthService {
       try {
         const res = await bcrypt.compare(password, user.password);
         if (res) {
-          const payload = { email };
+          const token = await this.generateAccessToken(email);
           return {
-            token: this.jwt.sign(payload),
+            token,
             id: user.id,
           };
         }

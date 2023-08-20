@@ -13,6 +13,7 @@ import {
   Query,
   Param,
   Ip,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupUserDto } from './dto/signup-user.dto';
@@ -21,6 +22,9 @@ import { PrismaClientExceptionFilter } from 'src/prisma-client-exception/prisma-
 import { MailService } from 'src/mail/mail.service';
 import { ResetPasswordService } from './reset-password.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Request } from 'express';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
+import { AccesTokenGuard } from './guards/acces-token.guard';
 
 @Controller('/api/v1/auth')
 @UseFilters(PrismaClientExceptionFilter)
@@ -81,11 +85,17 @@ export class AuthController {
     const user = await this.authService.signin(dto.email, dto.password);
 
     const userAgent = req.headers['user-agent'];
-    const refreshToken = this.authService.generateRefreshToken(
+    const refreshToken = await this.authService.generateRefreshToken(
       dto.email,
       ip,
       userAgent,
     );
+
+    if (!refreshToken) {
+      throw new ServiceUnavailableException(
+        'Failed to generate a refresh token',
+      );
+    }
 
     return {
       ...user,
@@ -93,11 +103,19 @@ export class AuthController {
     };
   }
 
-  @Get('/refresh/:refresh-token')
-  async refreshToken(
-    @Req() req: Request & { userId: string },
-    @Param('refresh-token') refreshtToken: string,
-  ) {
-    return 'ok';
+  @UseGuards(AccesTokenGuard)
+  @Get('/logout')
+  async logout(@Req() req: Request, @Ip() ipAddress: string) {
+    const email: string = req.user['email'];
+    const userAgent = req.headers['user-agent'];
+    await this.authService.invalidateRefreshToken(email, ipAddress, userAgent);
+    return 'logged out';
+  }
+
+  @UseGuards(RefreshTokenGuard)
+  @Get('/refresh-tokens')
+  async refreshTokens(@Req() req: Request) {
+    const refreshToken: string = req.user['refreshToken'];
+    return await this.authService.refreshTokens(refreshToken);
   }
 }
