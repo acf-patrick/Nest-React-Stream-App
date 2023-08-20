@@ -5,18 +5,23 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { MailModule } from 'src/mail/mail.module';
 import { ResetPasswordService } from './reset-password.service';
-import { AuthGuard } from './auth.guard';
+import { AccessTokenStartegy } from './strategies/access-token.strategy';
+import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, ResetPasswordService, AuthGuard],
+  providers: [
+    AuthService,
+    ResetPasswordService,
+    AccessTokenStartegy,
+    RefreshTokenStrategy,
+  ],
   imports: [
     PrismaModule,
+    MailModule,
     JwtModule.register({
       secret: process.env.ACCESS_SECRET,
-      signOptions: { expiresIn: '15m' },
     }),
-    MailModule,
   ],
   exports: [ResetPasswordService],
 })
