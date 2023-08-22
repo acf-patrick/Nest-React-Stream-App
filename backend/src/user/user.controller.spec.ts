@@ -29,49 +29,48 @@ describe('UserController', () => {
 
   beforeAll(async () => {
     configService = new ConfigService();
-    prisma = new PrismaService({
-      datasources: {
-        db: {
-          url: configService.get('DATABASE_URL'),
-        },
+    prisma = {
+      user: {
+        findUnique: jest
+          .fn()
+          .mockImplementation(
+            async (query: { where: { id: string } | { email: string } }) =>
+              users.find((user) =>
+                query.where['id']
+                  ? user.id === query.where['id']
+                  : user.email === query.where['email'],
+              ),
+          ),
+        update: jest.fn(),
       },
-    });
-    userService = new UserService(prisma);
-    codeService = new ResetPasswordService(prisma);
-    controller = new UserController(userService, codeService, configService);
+    } as unknown as PrismaService;
 
-    await prisma.user.deleteMany();
-    for (const user of users) {
-      await prisma.user.create({
-        data: user,
-      });
-    }
+    codeService = {
+      validateCode: jest.fn().mockReturnValue(true),
+      getAssociatedEmail: jest.fn().mockReturnValue(users[0].email),
+    } as unknown as ResetPasswordService;
+
+    userService = new UserService(prisma);
+    controller = new UserController(userService, codeService, configService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  it('get one user', async () => {
-    const user = await controller.getUser(users[0].id);
-    expect(user).toBeDefined();
+  it('get one user', () => {
+    expect(controller.getUser(users[0].id)).resolves.toBeDefined();
   });
 
   it('should set user password', async () => {
-    jest.spyOn(codeService, 'validateCode').mockReturnValue(true);
-    jest
-      .spyOn(codeService, 'getAssociatedEmail')
-      .mockReturnValue(users[0].email);
-
-    await controller.setPassword({
-      code: 'fake code',
+    const res = await controller.setPassword({
+      code: '0000',
       password: 'new password',
     });
 
-    const user = await prisma.user.findUnique({
-      where: { id: users[0].id },
-    });
-
-    expect(bcrypt.compare('new password', user.password)).resolves.toBeTruthy();
+    const query = jest.spyOn(prisma.user, 'update').mock.calls[0][0];
+    expect(
+      bcrypt.compare('new password', query.data.password as string),
+    ).resolves.toBeTruthy();
   });
 });
