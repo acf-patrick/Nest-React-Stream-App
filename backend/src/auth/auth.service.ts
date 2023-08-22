@@ -1,12 +1,17 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { SignupUserDto } from './dto/signup-user.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwt: JwtService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+    private configService: ConfigService,
+  ) {}
 
   async signup(signupUserDto: SignupUserDto) {
     const salt = await bcrypt.genSalt();
@@ -100,7 +105,7 @@ export class AuthService {
       },
       {
         expiresIn: '1d',
-        secret: process.env.REFRESH_SECRET,
+        secret: this.configService.get<string>('REFRESH_SECRET'),
       },
     );
 

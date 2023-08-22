@@ -8,13 +8,15 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ResetPasswordService } from 'src/auth/reset-password.service';
+import { ResetPasswordService } from '../auth/reset-password.service';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('/api/v1/user')
 export class UserController {
   constructor(
     private readonly userService: UserService,
     private codeService: ResetPasswordService,
+    private configService: ConfigService,
   ) {}
 
   @Get(':id')
@@ -22,7 +24,9 @@ export class UserController {
     const user = await this.userService.getOne(id);
     if (user) {
       if (user.avatar) {
-        user.avatar = `http://localhost:${process.env.PORT}/${user.avatar}`;
+        user.avatar = `http://localhost:${this.configService.get<string>(
+          'PORT',
+        )}/${user.avatar}`;
       }
       return user;
     }

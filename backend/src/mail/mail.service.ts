@@ -1,22 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class MailService {
   private transporter: nodemailer.Transporter;
 
-  constructor() {
+  constructor(configService: ConfigService) {
     this.transporter = nodemailer.createTransport(
       {
-        host: process.env.MAILER_HOST,
+        host: configService.get('MAILER_HOST'),
         secure: true,
         auth: {
-          user: process.env.MAILER_USER,
-          pass: process.env.MAILER_PASSWORD,
+          user: configService.get('MAILER_USER'),
+          pass: configService.get('MAILER_PASSWORD'),
         },
       },
       {
-        from: `Streamly ${process.env.MAILER_USER}`,
+        from: `Streamly ${configService.get('MAILER_USER')}`,
       },
     );
   }

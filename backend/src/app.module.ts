@@ -7,12 +7,14 @@ import { AuthModule } from './auth/auth.module';
 import { VideoModule } from './video/video.module';
 import { UserModule } from './user/user.module';
 import { MailModule } from './mail/mail.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
+    ConfigModule.forRoot(),
     AuthModule,
     VideoModule,
     UserModule,

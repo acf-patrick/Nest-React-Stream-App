@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from '../prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
-import { MailModule } from 'src/mail/mail.module';
+import { MailModule } from '../mail/mail.module';
 import { ResetPasswordService } from './reset-password.service';
 import { AccessTokenStartegy } from './strategies/access-token.strategy';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   controllers: [AuthController],
@@ -19,8 +20,13 @@ import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
   imports: [
     PrismaModule,
     MailModule,
-    JwtModule.register({
-      secret: process.env.ACCESS_SECRET,
+    JwtModule.registerAsync({
+      async useFactory(configService: ConfigService) {
+        return {
+          secret: configService.get<string>('ACCESS_SECRET'),
+        };
+      },
+      inject: [ConfigService],
     }),
   ],
   exports: [ResetPasswordService],

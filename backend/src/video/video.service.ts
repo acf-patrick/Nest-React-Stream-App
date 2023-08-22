@@ -7,7 +7,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { PostVideoDto } from './dto/post-video.dto';
 import { createReadStream, statSync } from 'fs';
 import { join } from 'path';

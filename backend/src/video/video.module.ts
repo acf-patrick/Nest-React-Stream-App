@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { VideoController } from './video.controller';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from '../prisma/prisma.module';
 import { diskStorage } from 'multer';
 import { MulterModule } from '@nestjs/platform-express';
 import { v4 as uuidv4 } from 'uuid';

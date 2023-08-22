@@ -18,8 +18,8 @@ import {
 import { VideoService } from './video.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { PostVideoDto } from './dto/post-video.dto';
-import { PrismaClientExceptionFilter } from 'src/prisma-client-exception/prisma-client-exception.filter';
-import { AccesTokenGuard } from 'src/auth/guards/acces-token.guard';
+import { PrismaClientExceptionFilter } from '../prisma-client-exception/prisma-client-exception.filter';
+import { AccesTokenGuard } from '../auth/guards/acces-token.guard';
 
 @Controller('/api/v1/video')
 @UseGuards(AccesTokenGuard)
