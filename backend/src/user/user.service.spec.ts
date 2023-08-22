@@ -1,72 +1,57 @@
 import { UserService } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
 describe('UserService', () => {
   let service: UserService;
   let prisma: PrismaService;
-  let configService: ConfigService;
 
-  const users = [
-    {
-      id: '0',
-      email: 'user1@mail.com',
-      password: '0000',
-      fullname: 'user 1',
-    },
-    {
-      id: '1',
-      email: 'user2@mail.com',
-      password: '1111',
-      fullname: 'user 2',
-    },
-  ];
+  const user = {
+    id: '0',
+    email: 'user1@mail.com',
+    password: '0000',
+    fullname: 'user 1',
+  };
 
-  beforeAll(async () => {
-    configService = new ConfigService();
-    prisma = new PrismaService({
-      datasources: {
-        db: {
-          url: configService.get('DATABASE_URL'),
-        },
+  beforeEach(async () => {
+    prisma = {
+      user: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: user.id,
+          email: user.email,
+          fullname: user.fullname,
+          avatar: null,
+        }),
+        update: jest.fn().mockResolvedValue({
+          email: user.email,
+        }),
       },
-    });
+    } as unknown as PrismaService;
     service = new UserService(prisma);
-
-    await prisma.user.deleteMany();
-    for (const user of users) {
-      await prisma.user.create({
-        data: user,
-      });
-    }
   });
 
   it('should be defined', () => {
-    [configService, prisma, service].forEach((service) =>
-      expect(service).toBeDefined(),
-    );
+    expect(service).toBeDefined();
   });
 
   it('get one user by ID', async () => {
-    const user = await service.getOne(users[0].id);
-    expect(user).toBeTruthy();
+    const res = await service.getOne(user.id);
+    expect(res).toBeTruthy();
   });
 
   it('get one user by email', async () => {
-    const user = await service.getOneByEmail(users[0].email);
-    expect(user).toBeTruthy();
+    const res = await service.getOneByEmail(user.email);
+    expect(res).toBeTruthy();
   });
 
   it('should set one user password', async () => {
     const newPassword = 'new password';
-    const res = await service.setPassword(users[0].email, newPassword);
+    const res = await service.setPassword(user.email, newPassword);
     expect(res).toBeTruthy();
 
-    const user = await prisma.user.findUnique({
-      where: { id: users[0].id },
-    });
-
-    expect(bcrypt.compare(newPassword, user.password)).resolves.toBeTruthy();
+    const query = jest.spyOn(prisma.user, 'update').mock.calls[0][0];
+    expect(
+      bcrypt.compare(newPassword, query.data.password as string),
+    ).resolves.toBeTruthy();
   });
 });

@@ -46,7 +46,7 @@ export class AuthService {
       },
     });
 
-    const newRefreshToken = await this.generateRefreshToken(
+    refreshToken = await this.generateRefreshToken(
       record.email,
       record.ipAddress,
       record.userAgent,
