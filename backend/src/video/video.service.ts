@@ -87,8 +87,12 @@ export class VideoService {
         throw new BadRequestException('Range not found');
       }
     } catch (e) {
-      console.error(e);
-      throw new ServiceUnavailableException();
+      if (e instanceof NotFoundException) {
+        throw e;
+      } else {
+        console.error(e);
+        throw new ServiceUnavailableException();
+      }
     }
   }
 

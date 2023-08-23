@@ -14,6 +14,7 @@ import {
   Query,
   UseFilters,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -73,6 +74,10 @@ export class VideoController {
       cover?: Express.Multer.File[];
     },
   ) {
+    if (!files.video || !files.cover) {
+      throw new BadRequestException('No video or cover image provided');
+    }
+    
     const payload = {
       userId: req.userId,
       title: video.title,

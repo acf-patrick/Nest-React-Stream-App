@@ -1,18 +1,114 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { VideoService } from './video.service';
+import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
+import { PrismaClient, Video } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
+import { NotFoundException } from '@nestjs/common';
+import { Request, Response } from 'express';
+import * as fs from 'fs';
 
 describe('VideoService', () => {
   let service: VideoService;
+  let prisma: DeepMockProxy<PrismaClient>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [VideoService],
-    }).compile();
+  beforeAll(() => {
+    prisma = mockDeep<PrismaClient>();
+    const prismaService = prisma as unknown as PrismaService;
 
-    service = module.get<VideoService>(VideoService);
+    service = new VideoService(prismaService);
+  });
+
+  beforeEach(() => {
+    mockReset(prisma);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should just create new video record', async () => {
+    const record: Video = {
+      coverImage: 'cover_image',
+      title: 'video_title',
+      video: 'file_name',
+      id: '',
+      uploadDate: new Date(),
+      userId: '',
+    };
+    prisma.video.create.mockResolvedValue(record);
+
+    const { id, uploadDate, ...dto } = record;
+    await expect(service.createVideo(dto)).resolves.toStrictEqual(record);
+  });
+
+  it('gets one video record', async () => {
+    const videoId = 'video_id';
+    const record: Video = {
+      coverImage: 'cover_image',
+      title: 'video_title',
+      video: 'file_name',
+      id: videoId,
+      uploadDate: new Date(),
+      userId: '',
+    };
+
+    prisma.video.findUnique.mockResolvedValue(record);
+    await expect(service.readOneVideo(videoId)).resolves.toStrictEqual(record);
+  });
+
+  it('throws 404 error for non-existent video', async () => {
+    prisma.video.findUnique.mockResolvedValue(null);
+    await expect(service.readOneVideo('mock_id')).rejects.toThrowError(
+      NotFoundException,
+    );
+  });
+
+  it('get all video records', async () => {
+    prisma.video.findMany.mockResolvedValue([]);
+    await expect(service.readVideos()).resolves.toEqual([]);
+  });
+
+  it('should throw 404 error on stream failure', async () => {
+    prisma.video.findUnique.mockResolvedValue(null);
+
+    let res = {} as Response;
+    let req = {} as Request;
+    await expect(service.streamVideo('', res, req)).rejects.toThrowError(
+      NotFoundException,
+    );
+  });
+
+  it('should update existing record', async () => {
+    const record: Video = {
+      coverImage: 'image_file',
+      id: 'video_id',
+      title: 'video_title',
+      uploadDate: new Date(),
+      userId: 'user_id',
+      video: 'file_name',
+    };
+    prisma.video.upsert.mockResolvedValue(record);
+
+    const { uploadDate, id, ...dto } = record;
+    await expect(service.update(record.id, dto)).resolves.toStrictEqual(record);
+  });
+
+  it('throws 404 error on delete failure', async () => {
+    prisma.video.findUnique.mockResolvedValue(null);
+    await expect(service.delete('')).rejects.toThrowError(NotFoundException);
+  });
+
+  it('delete one video record', async () => {
+    const record: Video = {
+      coverImage: 'image_file',
+      id: 'video_id',
+      title: 'video_title',
+      uploadDate: new Date(),
+      userId: 'user_id',
+      video: 'file_name',
+    };
+    prisma.video.findUnique.mockResolvedValue(record);
+    jest.spyOn(fs, 'unlink').mockImplementation((...args: any[]) => {});
+
+    await expect(service.delete('')).resolves.not.toThrow();
   });
 });
