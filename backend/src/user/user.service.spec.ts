@@ -50,7 +50,7 @@ describe('UserService', () => {
     expect(res).toBeTruthy();
 
     const query = jest.spyOn(prisma.user, 'update').mock.calls[0][0];
-    expect(
+    await expect(
       bcrypt.compare(newPassword, query.data.password as string),
     ).resolves.toBeTruthy();
   });

@@ -58,18 +58,18 @@ describe('UserController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('get one user', () => {
-    expect(controller.getUser(users[0].id)).resolves.toBeDefined();
+  it('get one user', async () => {
+    await expect(controller.getUser(users[0].id)).resolves.toBeDefined();
   });
 
   it('should set user password', async () => {
-    const res = await controller.setPassword({
+    await controller.setPassword({
       code: '0000',
       password: 'new password',
     });
 
     const query = jest.spyOn(prisma.user, 'update').mock.calls[0][0];
-    expect(
+    await expect(
       bcrypt.compare('new password', query.data.password as string),
     ).resolves.toBeTruthy();
   });

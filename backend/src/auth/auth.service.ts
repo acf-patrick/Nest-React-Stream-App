@@ -92,6 +92,10 @@ export class AuthService {
     }
   }
 
+  /**
+   * Return existing refresh-token for this user or create a new one
+   * Create a JWT token with email, ip address, user agent as payload
+   */
   async generateRefreshToken(
     email: string,
     ipAddress: string,
@@ -130,11 +134,8 @@ export class AuthService {
         email,
       },
     });
-    if (record) {
-      return refreshToken;
-    }
 
-    return null;
+    return refreshToken;
   }
 
   async signin(email: string, password: string) {

@@ -10,8 +10,6 @@ import {
   InternalServerErrorException,
   Get,
   Req,
-  Query,
-  Param,
   Ip,
   UseGuards,
 } from '@nestjs/common';
@@ -84,7 +82,7 @@ export class AuthController {
   ) {
     const user = await this.authService.signin(dto.email, dto.password);
 
-    const userAgent = req.headers['user-agent'];
+    const userAgent = req.headers['user-agent']!;
     const refreshToken = await this.authService.generateRefreshToken(
       dto.email,
       ip,
@@ -106,8 +104,9 @@ export class AuthController {
   @UseGuards(AccesTokenGuard)
   @Get('/logout')
   async logout(@Req() req: Request, @Ip() ipAddress: string) {
-    const email: string = req.user['email'];
-    const userAgent = req.headers['user-agent'];
+    const user = req.user!;
+    const email: string = user['email'];
+    const userAgent = req.headers['user-agent']!;
     await this.authService.invalidateRefreshToken(email, ipAddress, userAgent);
     return 'logged out';
   }
@@ -115,7 +114,8 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Get('/refresh-tokens')
   async refreshTokens(@Req() req: Request) {
-    const refreshToken: string = req.user['refreshToken'];
+    const user = req.user!;
+    const refreshToken: string = user['refreshToken'];
     return await this.authService.refreshTokens(refreshToken);
   }
 }
