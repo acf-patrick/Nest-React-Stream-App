@@ -7,7 +7,7 @@ import { MailModule } from '../mail/mail.module';
 import { ResetPasswordService } from './reset-password.service';
 import { AccessTokenStartegy } from './strategies/access-token.strategy';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   controllers: [AuthController],

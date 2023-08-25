@@ -26,7 +26,7 @@ export class UserController {
       if (user.avatar) {
         user.avatar = `http://localhost:${this.configService.get<string>(
           'PORT',
-        )}/${user.avatar}`;
+        )}/images/${user.avatar}`;
       }
       return user;
     }

@@ -62,14 +62,14 @@ const Link = styled.li<{ $active: boolean }>`
     color: ${({ theme, $active }) =>
       $active
         ? theme.colors.primary
-        : rgba(theme.colors.primary, 0.55)} !important;
+        : rgba(theme.colors.primary, 0.6)} !important;
   }
 
   & > svg {
     color: ${({ theme, $active }) =>
       $active
         ? theme.colors.quaternary
-        : rgba(theme.colors.primary, 0.55)} !important;
+        : rgba(theme.colors.primary, 0.6)} !important;
   }
 
   &:hover {
