@@ -2,6 +2,7 @@ const themes = {
   colors: {
     light: {
       background: "white",
+      cardBg: "#787878",
       logo: "red",
       inputBg: "grey",
       placeholder: "rgba(255, 255, 255, 0.75)",
@@ -14,6 +15,7 @@ const themes = {
     },
     dark: {
       background: "#0f0f0f",
+      cardBg: "#303030",
       logo: "red",
       inputBg: "grey",
       placeholder: "rgba(255, 255, 255, 0.75)",

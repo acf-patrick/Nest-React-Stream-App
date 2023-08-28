@@ -1,7 +1,7 @@
 import styled, { ThemeProvider, keyframes } from "styled-components";
 import themes from "./styles/themes";
 import ThemeContext from "./contexts/theme";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import router from "./router";
 import { RouterProvider } from "react-router-dom";
 import GlobalStyles from "./styles/globalStyles";

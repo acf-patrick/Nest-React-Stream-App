@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   ServiceUnavailableException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
@@ -18,6 +19,11 @@ export class VideoService {
   constructor(private prisma: PrismaService) {}
 
   async createVideo(video: PostVideoDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: video.userEmail },
+      select: { id: true },
+    });
+
     return await this.prisma.video.create({
       data: {
         coverImage: video.coverImage,
@@ -25,7 +31,7 @@ export class VideoService {
         video: video.video,
         createdBy: {
           connect: {
-            id: video.userId,
+            id: user!.id,
           },
         },
       },
@@ -42,6 +48,25 @@ export class VideoService {
     }
 
     throw new NotFoundException(`No video with ID ${id}`);
+  }
+
+  async getUsersVideos(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+      select: { id: true },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`No user with email ${email} found`);
+    }
+
+    return await this.prisma.video.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
   }
 
   async readVideos() {
@@ -97,10 +122,24 @@ export class VideoService {
   }
 
   async update(id: string, video: PostVideoDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: video.userEmail },
+      select: { id: true },
+    });
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    const { userEmail, ...rest } = video;
+    const record = {
+      userId: user.id,
+      ...rest,
+    };
+
     return await this.prisma.video.upsert({
       where: { id },
-      update: { ...video },
-      create: { id, ...video },
+      update: record,
+      create: { id, ...record },
     });
   }
 

@@ -60,7 +60,7 @@ describe('VideoController', () => {
     const dto: PostVideoDto = {
       coverImage: 'new_cover_image',
       title: 'new_video_title',
-      userId: 'new_user_id',
+      userEmail: 'new_user@mail.com',
       video: 'new_video_file',
     };
     await expect(controller.update(record.id, dto)).resolves.toStrictEqual({

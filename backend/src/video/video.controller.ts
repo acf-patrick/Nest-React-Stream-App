@@ -15,12 +15,15 @@ import {
   UseFilters,
   UseGuards,
   BadRequestException,
+  UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { PostVideoDto } from './dto/post-video.dto';
 import { PrismaClientExceptionFilter } from '../prisma-client-exception/prisma-client-exception.filter';
 import { AccesTokenGuard } from '../auth/guards/acces-token.guard';
+import { Request } from 'express';
 
 @Controller('/api/v1/video')
 @UseGuards(AccesTokenGuard)
@@ -29,12 +32,27 @@ export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
   @Get()
+  readUsersVideos(@Req() req: Request) {
+    const user = req.user;
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    const videos = this.videoService.getUsersVideos(user['email']);
+    if (!videos) {
+      throw new NotFoundException('No video found for this user');
+    }
+
+    return videos;
+  }
+
+  @Get('/a')
   readVideos() {
     return this.videoService.readVideos();
   }
 
   @Get()
-  readOneVideo(@Query() id: string) {
+  readOneVideo(@Query('id') id: string) {
     return this.videoService.readOneVideo(id);
   }
 
@@ -62,8 +80,8 @@ export class VideoController {
       { name: 'cover', maxCount: 1 },
     ]),
   )
-  createBook(
-    @Req() req: Request & { userId: string },
+  async postVideo(
+    @Req() req: Request,
     @Body()
     video: {
       title: string;
@@ -77,12 +95,16 @@ export class VideoController {
     if (!files.video || !files.cover) {
       throw new BadRequestException('No video or cover image provided');
     }
-    
+
+    if (!req.user) {
+      throw new UnauthorizedException();
+    }
+
     const payload = {
-      userId: req.userId,
       title: video.title,
       video: files.video[0].filename,
       coverImage: files.cover[0].filename,
+      userEmail: req.user['email'],
     };
     return this.videoService.createVideo(payload);
   }

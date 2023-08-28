@@ -1,4 +1,4 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsEmail, IsString, IsUUID } from 'class-validator';
 
 export class PostVideoDto {
   @IsString()
@@ -10,6 +10,6 @@ export class PostVideoDto {
   @IsString()
   coverImage: string;
 
-  @IsUUID()
-  userId: string;
+  @IsEmail()
+  userEmail: string;
 }

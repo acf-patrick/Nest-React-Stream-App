@@ -1,6 +1,6 @@
 import { VideoService } from './video.service';
 import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
-import { PrismaClient, Video } from '@prisma/client';
+import { PrismaClient, User, Video } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 import { Request, Response } from 'express';
@@ -25,7 +25,7 @@ describe('VideoService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should just create new video record', async () => {
+  it('should create new video record', async () => {
     const record: Video = {
       coverImage: 'cover_image',
       title: 'video_title',
@@ -36,7 +36,21 @@ describe('VideoService', () => {
     };
     prisma.video.create.mockResolvedValue(record);
 
-    const { id, uploadDate, ...dto } = record;
+    const mockUser: User = {
+      avatar: null,
+      createdDate: new Date(),
+      email: 'user@mail.com',
+      fullname: 'user',
+      id: '',
+      password: 'pass',
+    };
+    prisma.user.findUnique.mockResolvedValue(mockUser);
+
+    const { id, uploadDate, ...rest } = record;
+    const { userId, ...dto } = {
+      userEmail: 'user@mail.com',
+      ...rest,
+    };
     await expect(service.createVideo(dto)).resolves.toStrictEqual(record);
   });
 
@@ -88,7 +102,21 @@ describe('VideoService', () => {
     };
     prisma.video.upsert.mockResolvedValue(record);
 
-    const { uploadDate, id, ...dto } = record;
+    const mockUser: User = {
+      avatar: null,
+      createdDate: new Date(),
+      email: 'user@mail.com',
+      fullname: 'user',
+      id: '',
+      password: 'pass',
+    };
+    prisma.user.findUnique.mockResolvedValue(mockUser);
+
+    const { uploadDate, id, ...rest } = record;
+    const { userId, ...dto } = {
+      userEmail: 'user@mail.com',
+      ...rest,
+    };
     await expect(service.update(record.id, dto)).resolves.toStrictEqual(record);
   });
 
