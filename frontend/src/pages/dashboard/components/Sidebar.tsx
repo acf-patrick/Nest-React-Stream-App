@@ -4,8 +4,10 @@ import { FaRegCompass } from "react-icons/fa";
 import { BsGear } from "react-icons/bs";
 import { IoExitOutline } from "react-icons/io5";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Logo } from "../../../components";
 import { rgba } from "polished";
+import api from "../../../api";
 
 type Link = {
   icon: React.JSX.Element;
@@ -32,7 +34,7 @@ const Container = styled.nav`
     padding: unset;
   }
 
-  a { 
+  a {
     color: ${({ theme }) => theme.colors.primary};
   }
 
@@ -123,11 +125,36 @@ function Sidebar() {
         {
           label: "Log out",
           icon: <IoExitOutline />,
+          action() {
+            const token = localStorage.getItem("refresh");
+            const logout = async () => {
+              const res = await api.get("/auth/refresh-tokens", {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+
+              const { accessToken } = res.data;
+              await api.get("/auth/logout", {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              });
+            };
+
+            logout()
+              .then(() => {
+                localStorage.clear();
+                navigate("/login");
+              })
+              .catch((err) => console.error(err));
+          },
         },
       ],
     },
   ];
 
+  const navigate = useNavigate();
   const [activeLink, setActiveLink] = useState(sections[0].links[0].label);
 
   return (
