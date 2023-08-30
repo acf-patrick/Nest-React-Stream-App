@@ -65,7 +65,7 @@ export class AuthService {
         email,
       },
       {
-        expiresIn: '15m',
+        expiresIn: '1h',
       },
     );
     return token;

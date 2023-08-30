@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Logo } from "../../../components";
 import { rgba } from "polished";
 import api from "../../../api";
+import { Link } from "react-router-dom";
 
 type Link = {
   icon: React.JSX.Element;
@@ -24,6 +25,7 @@ type Section = {
 const Container = styled.nav`
   display: flex;
   flex-direction: column;
+  min-width: 280px;
   max-width: 280px;
   align-items: stretch;
   padding-top: 1rem;
@@ -51,7 +53,7 @@ const Container = styled.nav`
   }
 `;
 
-const Link = styled.li<{ $active: boolean }>`
+const StyledLink = styled.li<{ $active: boolean }>`
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -107,11 +109,12 @@ function Sidebar() {
         {
           icon: <AiTwotoneHeart />,
           label: "My Videos",
+          to: "/",
         },
         {
           icon: <FaRegCompass />,
           label: "Explore",
-          to: "",
+          to: "/explore",
         },
       ],
     },
@@ -121,6 +124,7 @@ function Sidebar() {
         {
           label: "Settings",
           icon: <BsGear />,
+          to: "/settings",
         },
         {
           label: "Log out",
@@ -167,21 +171,30 @@ function Sidebar() {
           <p>{section.label}</p>
           <ul>
             {section.links.map((link) => (
-              <Link key={link.label} $active={link.label === activeLink}>
+              <StyledLink key={link.label} $active={link.label === activeLink}>
                 {link.icon}
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setActiveLink(link.label);
-                    if (link.action) {
-                      link.action();
-                    }
-                  }}
-                >
-                  {link.label}
-                </a>
-              </Link>
+                {link.action ? (
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveLink(link.label);
+                      link.action!();
+                    }}
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    to={link.to!}
+                    onClick={() => {
+                      setActiveLink(link.label);
+                    }}
+                  >
+                    {link.label}
+                  </Link>
+                )}
+              </StyledLink>
             ))}
           </ul>
         </div>

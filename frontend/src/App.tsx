@@ -1,7 +1,7 @@
 import styled, { ThemeProvider, keyframes } from "styled-components";
 import themes from "./styles/themes";
 import ThemeContext from "./contexts/theme";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import router from "./router";
 import { RouterProvider } from "react-router-dom";
 import GlobalStyles from "./styles/globalStyles";
@@ -30,7 +30,14 @@ const ThemeSwipper = styled.div<{ $color: string }>`
 
 function App() {
   const [showSwipper, setShowSwipper] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("light");
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    document.body.style.background =
+      theme === "dark"
+        ? themes.colors.dark.background
+        : themes.colors.light.background;
+  }, []);
 
   return (
     <ThemeContext.Provider
@@ -61,6 +68,7 @@ function App() {
       <ThemeProvider
         theme={{
           ...themes,
+          theme,
           colors: theme === "light" ? themes.colors.light : themes.colors.dark,
         }}
       >

@@ -32,28 +32,45 @@ export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
   @Get()
-  readUsersVideos(@Req() req: Request) {
+  async readUsersVideos(@Req() req: Request) {
     const user = req.user;
     if (!user) {
       throw new UnauthorizedException();
     }
 
-    const videos = this.videoService.getUsersVideos(user['email']);
+    const videos = await this.videoService.getUsersVideos(user['email']);
     if (!videos) {
       throw new NotFoundException('No video found for this user');
     }
 
-    return videos;
+    return videos.map((record) => {
+      const { video, ...datas } = record;
+      return datas;
+    });
   }
 
   @Get('/a')
-  readVideos() {
-    return this.videoService.readVideos();
+  async readVideos() {
+    const videos = await this.videoService.readVideos();
+    if (!videos) {
+      throw new NotFoundException('No video found');
+    }
+
+    return videos.map((record) => {
+      const { video, ...datas } = record;
+      return datas;
+    });
   }
 
   @Get()
-  readOneVideo(@Query('id') id: string) {
-    return this.videoService.readOneVideo(id);
+  async readOneVideo(@Query('id') id: string) {
+    const record = await this.videoService.readOneVideo(id);
+    if (!record) {
+      throw new NotFoundException('Video non-existent.');
+    }
+
+    const { video, ...datas } = record;
+    return datas;
   }
 
   @Get('/:id')

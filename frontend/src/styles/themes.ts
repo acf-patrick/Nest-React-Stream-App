@@ -12,6 +12,7 @@ const themes = {
       secondaryVariant: "#7899ba",
       tertiary: "#F5F5F5",
       quaternary: "#F05454",
+      playButton: "#F9DBBB",
     },
     dark: {
       background: "#0f0f0f",
@@ -21,10 +22,11 @@ const themes = {
       placeholder: "rgba(255, 255, 255, 0.75)",
       opposite: "black",
       primary: "#bebebe",
-      secondary: "#30475E",
+      secondary: "#456687",
       secondaryVariant: "#7899ba",
-      tertiary: "#F5F5F5",
+      tertiary: "#4a4a4a",
       quaternary: "#F05454",
+      playButton: "#F9DBBB",
     },
   },
   sizes: {

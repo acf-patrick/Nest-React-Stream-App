@@ -34,8 +34,9 @@ describe('VideoController', () => {
     };
     videoService.readOneVideo.mockResolvedValue(record);
 
+    const { video, ...datas } = record;
     await expect(controller.readOneVideo(record.id)).resolves.toStrictEqual(
-      record,
+      datas,
     );
   });
 

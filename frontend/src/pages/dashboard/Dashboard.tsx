@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Header } from "../../components";
 import { Sidebar } from "./components";
+import { Outlet } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -10,6 +11,23 @@ const Container = styled.div`
   & > * {
     flex-grow: 1;
   }
+
+  main {
+    overflow-y: auto;
+  }
+
+  .outlet {
+    padding-left: 3rem;
+
+    h1 {
+      color: ${({ theme }) => theme.colors.primary};
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-weight: unset;
+      letter-spacing: 2px;
+    }
+  }
 `;
 
 function Dashboard() {
@@ -18,7 +36,9 @@ function Dashboard() {
       <Sidebar />
       <main>
         <Header />
-        <div>Dashboard</div>
+        <div className="outlet">
+          <Outlet />
+        </div>
       </main>
     </Container>
   );

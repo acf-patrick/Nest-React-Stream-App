@@ -24,6 +24,10 @@ export class VideoService {
       select: { id: true },
     });
 
+    if (!user) {
+      throw new UnauthorizedException('User non-existent');
+    }
+
     return await this.prisma.video.create({
       data: {
         coverImage: video.coverImage,
@@ -31,7 +35,7 @@ export class VideoService {
         video: video.video,
         createdBy: {
           connect: {
-            id: user!.id,
+            id: user.id,
           },
         },
       },

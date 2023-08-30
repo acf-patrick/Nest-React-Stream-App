@@ -6,6 +6,7 @@ import {
   ResetPassword,
   SetNewPassword,
 } from "./pages/forgot-password/components";
+import { Explore, UsersVideos } from "./pages/dashboard/components";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,16 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Dashboard />,
+    children: [
+      {
+        path: "",
+        element: <UsersVideos />,
+      },
+      {
+        path: "explore",
+        element: <Explore />,
+      },
+    ],
   },
 ]);
 
