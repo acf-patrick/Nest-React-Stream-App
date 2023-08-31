@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 import VideoCard from "./VideoCard";
 import StyledVideolist from "./video-list.styled";
 import { darken, lighten, transparentize } from "polished";
-import { useVideos } from "../hooks/fetch";
+import { useVideos } from "../hooks";
 
 const StyledNewVideoButton = styled.button`
   display: flex;
@@ -41,7 +41,7 @@ const StyledNewVideoButton = styled.button`
   }
 `;
 
-function NewVideoButton() {
+const NewVideoButton = () => {
   return (
     <StyledNewVideoButton>
       <span className="plus">
@@ -50,7 +50,7 @@ function NewVideoButton() {
       <span>Upload video</span>
     </StyledNewVideoButton>
   );
-}
+};
 
 export default function UsersVideos() {
   const videos = useVideos("/video");

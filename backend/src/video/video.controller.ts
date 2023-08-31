@@ -85,8 +85,9 @@ export class VideoController {
 
   @Delete('/:id')
   @HttpCode(200)
-  delete(@Param('id') id: string) {
-    return this.videoService.delete(id);
+  async delete(@Req() req: Request, @Param('id') id: string) {
+    const email = req.user!['email'];
+    return this.videoService.delete(id, email);
   }
 
   @Post()

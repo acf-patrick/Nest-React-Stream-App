@@ -1,6 +1,6 @@
 import { IoTelescopeSharp } from "react-icons/io5";
 import StyledVideolist from "./video-list.styled";
-import { useVideos } from "../hooks/fetch";
+import { useVideos } from "../hooks";
 import VideoCard from "./VideoCard";
 
 export default function Explore() {

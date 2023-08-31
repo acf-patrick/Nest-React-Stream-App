@@ -13,10 +13,21 @@ import { PostVideoDto } from './dto/post-video.dto';
 import { createReadStream, statSync } from 'fs';
 import { join } from 'path';
 import * as fs from 'fs';
+import getVideoDurationInSeconds from 'get-video-duration';
 
 @Injectable()
 export class VideoService {
   constructor(private prisma: PrismaService) {}
+
+  async getDuration(video: string) {
+    let duration: number | null = null;
+    try {
+      duration = await getVideoDurationInSeconds(`/videos/${video}`);
+    } catch (e) {
+      console.error(e);
+    }
+    return duration;
+  }
 
   async createVideo(video: PostVideoDto) {
     const user = await this.prisma.user.findUnique({
@@ -28,11 +39,14 @@ export class VideoService {
       throw new UnauthorizedException('User non-existent');
     }
 
+    let duration = await this.getDuration(video.video);
+
     return await this.prisma.video.create({
       data: {
         coverImage: video.coverImage,
         title: video.title,
         video: video.video,
+        length: duration,
         createdBy: {
           connect: {
             id: user.id,
@@ -147,10 +161,20 @@ export class VideoService {
     });
   }
 
-  async delete(id: string) {
-    const video = await this.prisma.video.findUnique({ where: { id } });
+  async delete(id: string, userEmail: string) {
+    const video = await this.prisma.video.findUnique({
+      where: { id },
+      include: { createdBy: true },
+    });
+
     if (!video) {
       throw new NotFoundException(`Video with ID ${id} not found`);
+    }
+
+    if (video.createdBy.email !== userEmail) {
+      throw new UnauthorizedException(
+        'You have not the right to delete this video',
+      );
     }
 
     [video.video, video.coverImage].forEach((path) => {

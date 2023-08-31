@@ -33,6 +33,7 @@ describe('VideoService', () => {
       id: '',
       uploadDate: new Date(),
       userId: '',
+      length: null,
     };
     prisma.video.create.mockResolvedValue(record);
 
@@ -45,6 +46,8 @@ describe('VideoService', () => {
       password: 'pass',
     };
     prisma.user.findUnique.mockResolvedValue(mockUser);
+
+    jest.spyOn(service, 'getDuration').mockResolvedValue(null);
 
     const { id, uploadDate, ...rest } = record;
     const { userId, ...dto } = {
@@ -63,6 +66,7 @@ describe('VideoService', () => {
       id: videoId,
       uploadDate: new Date(),
       userId: '',
+      length: null,
     };
 
     prisma.video.findUnique.mockResolvedValue(record);
@@ -99,6 +103,7 @@ describe('VideoService', () => {
       uploadDate: new Date(),
       userId: 'user_id',
       video: 'file_name',
+      length: null,
     };
     prisma.video.upsert.mockResolvedValue(record);
 
@@ -122,21 +127,28 @@ describe('VideoService', () => {
 
   it('throws 404 error on delete failure', async () => {
     prisma.video.findUnique.mockResolvedValue(null);
-    await expect(service.delete('')).rejects.toThrowError(NotFoundException);
+    await expect(service.delete('', 'user@mail.com')).rejects.toThrowError(
+      NotFoundException,
+    );
   });
 
   it('delete one video record', async () => {
-    const record: Video = {
+    const record = {
       coverImage: 'image_file',
       id: 'video_id',
       title: 'video_title',
       uploadDate: new Date(),
       userId: 'user_id',
       video: 'file_name',
+      length: null,
+      createdBy: {
+        email: 'user@mail.com',
+      },
     };
+
     prisma.video.findUnique.mockResolvedValue(record);
     jest.spyOn(fs, 'unlink').mockImplementation((...args: any[]) => {});
 
-    await expect(service.delete('')).resolves.not.toThrow();
+    await expect(service.delete('', 'user@mail.com')).resolves.not.toThrow();
   });
 });

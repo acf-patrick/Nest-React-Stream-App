@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Request } from 'express';
 import { VideoController } from './video.controller';
 import { VideoService } from './video.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
@@ -31,6 +31,7 @@ describe('VideoController', () => {
       uploadDate: new Date(),
       userId: 'user_id',
       video: 'file_name',
+      length: null,
     };
     videoService.readOneVideo.mockResolvedValue(record);
 
@@ -48,6 +49,7 @@ describe('VideoController', () => {
       uploadDate: new Date(),
       userId: 'user_id',
       video: 'file_name',
+      length: null,
     };
     videoService.update.mockImplementation(
       async (id: string, video: PostVideoDto) => {
@@ -72,6 +74,13 @@ describe('VideoController', () => {
 
   it('should not throw error on video deletion', async () => {
     videoService.delete.mockImplementation(async (id: string) => {});
-    await expect(controller.delete('video_id')).resolves.not.toThrow();
+
+    const req = {
+      user: {
+        email: 'user@mail.com',
+      },
+    } as unknown as Request;
+
+    await expect(controller.delete(req, 'video_id')).resolves.not.toThrow();
   });
 });
