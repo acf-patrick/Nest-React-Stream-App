@@ -12,7 +12,7 @@ const themes = {
       secondaryVariant: "#7899ba",
       tertiary: "#F5F5F5",
       quaternary: "#F05454",
-      playButton: "#F9DBBB",
+      playButton: "#f9bbbb",
     },
     dark: {
       background: "#0f0f0f",
@@ -26,7 +26,7 @@ const themes = {
       secondaryVariant: "#7899ba",
       tertiary: "#4a4a4a",
       quaternary: "#F05454",
-      playButton: "#F9DBBB",
+      playButton: "#f9bbbb",
     },
   },
   sizes: {

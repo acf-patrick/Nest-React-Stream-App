@@ -1,15 +1,24 @@
-import { styled } from "styled-components";
 import { IoTelescopeSharp } from "react-icons/io5";
-
-const StyledContainer = styled.div``;
+import StyledVideolist from "./video-list.styled";
+import { useVideos } from "../hooks/fetch";
+import VideoCard from "./VideoCard";
 
 export default function Explore() {
+  const videos = useVideos("/video/a");
+
   return (
-    <StyledContainer>
+    <div>
       <h1>
         <span>Discover</span>
         <IoTelescopeSharp />
       </h1>
-    </StyledContainer>
+      <StyledVideolist>
+        {videos.map((video, i) => (
+          <li key={i}>
+            <VideoCard {...video} />
+          </li>
+        ))}
+      </StyledVideolist>
+    </div>
   );
 }

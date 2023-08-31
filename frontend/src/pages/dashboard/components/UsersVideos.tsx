@@ -1,20 +1,10 @@
 import { MdVideoLibrary } from "react-icons/md";
 import { PiVideo } from "react-icons/pi";
 import { styled } from "styled-components";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../../../api";
 import VideoCard from "./VideoCard";
 import StyledVideolist from "./video-list.styled";
 import { darken, lighten, transparentize } from "polished";
-
-type Video = {
-  id: string;
-  title: string;
-  coverImage: string;
-  uploadDate: Date;
-  userId: string;
-};
+import { useVideos } from "../hooks/fetch";
 
 const StyledNewVideoButton = styled.button`
   display: flex;
@@ -63,75 +53,24 @@ function NewVideoButton() {
 }
 
 export default function UsersVideos() {
-  const [videos, setVideos] = useState<Video[]>([]);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetch = async (token: string) => {
-      const res = await api.get("/video", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.data) {
-        setVideos(
-          res.data.map((video: Video) => ({
-            ...video,
-            uploadDate: new Date(video.uploadDate),
-          }))
-        );
-      }
-    };
-
-    const handleFetch = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (token) {
-          await fetch(token);
-        } else {
-          throw new Error();
-        }
-      } catch {
-        const refresh = localStorage.getItem("refresh");
-        if (refresh) {
-          localStorage.removeItem("refresh");
-          const res = await api.get("/auth/refresh-tokens", {
-            headers: {
-              Authorization: `Bearer ${refresh}`,
-            },
-          });
-
-          const { accessToken, refreshToken } = res.data;
-          localStorage.setItem("token", accessToken);
-          localStorage.setItem("refresh", refreshToken);
-          await fetch(accessToken);
-        }
-      }
-    };
-
-    handleFetch().catch((err) => {
-      console.error(err);
-      navigate("/login");
-    });
-  }, []);
+  const videos = useVideos("/video");
 
   return (
-    <StyledVideolist>
+    <div>
       <h1>
         <span>Your videos</span>
         <MdVideoLibrary />
       </h1>
-      <ul>
+      <StyledVideolist>
         {videos.map((video, i) => (
           <li key={i}>
-            <VideoCard {...video}  />
+            <VideoCard {...video} hideUserData />
           </li>
         ))}
         <li>
           <NewVideoButton />
         </li>
-      </ul>
-    </StyledVideolist>
+      </StyledVideolist>
+    </div>
   );
 }

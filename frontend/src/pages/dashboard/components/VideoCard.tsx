@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import api from "../../../api";
 import { darken, lighten } from "polished";
-import { AiFillPlayCircle } from "react-icons/ai";
+import { FaPlay } from "react-icons/fa";
 
 type CardProps = {
   id: string;
@@ -16,7 +16,6 @@ type CardProps = {
 const StyledCard = styled.div`
   width: 100%;
   height: 100%;
-  cursor: pointer;
   border-radius: 15px;
   overflow: hidden;
   transition: box-shadow 500ms;
@@ -65,14 +64,27 @@ const StyledCard = styled.div`
   }
 
   .play {
+    all: unset;
+    cursor: pointer;
     position: absolute;
     left: 1rem;
-    bottom: 0;
-    font-size: 4rem;
-    color: ${({ theme }) => theme.colors.playButton};
+    bottom: 1rem;
+    font-size: 1.5rem;
     opacity: 0;
     transform: translateY(10px);
     transition: transform 500ms, opacity 500ms;
+    color: white;
+    background: ${({ theme }) => theme.colors.playButton};
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 100%;
+    box-shadow: 0 3px 5px #00000086;
+
+    svg {
+      transform: translateX(2px);
+    }
   }
 
   .upload-date {
@@ -178,9 +190,9 @@ export default function VideoCard(props: CardProps) {
     <StyledCard>
       <div>
         <img src={`http://localhost:3000/videos/${props.coverImage}`} alt="" />
-        <span className="play">
-          <AiFillPlayCircle />
-        </span>
+        <button className="play">
+          <FaPlay />
+        </button>
       </div>
       {user && (
         <div className="user-picture">
