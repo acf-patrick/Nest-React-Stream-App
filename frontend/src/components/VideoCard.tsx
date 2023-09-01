@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import api from "../../../api";
+import api from "../api";
 import { darken, lighten } from "polished";
 import { FaPlay } from "react-icons/fa";
 
@@ -81,6 +81,10 @@ const StyledCard = styled.div`
     height: 64px;
     border-radius: 100%;
     box-shadow: 0 3px 5px #00000086;
+
+    &:active {
+      box-shadow: inset 0 0 5px #000000ba;
+    }
 
     svg {
       transform: translateX(2px);
@@ -168,14 +172,14 @@ export default function VideoCard(props: CardProps) {
     } else {
       const hours = min / 60;
       if (hours < 1) {
-        const elapsed = Math.floor(hours);
+        const elapsed = Math.round(hours);
         setUploadDate(`${elapsed} minute${elapsed > 1 ? "s" : ""} ago`);
       } else {
         if (hours < 24) {
-          const elapsed = Math.floor(hours);
+          const elapsed = Math.round(hours);
           setUploadDate(`${elapsed} hour${elapsed > 1 ? "s" : ""} ago`);
         } else {
-          const days = Math.floor(hours / 24);
+          const days = Math.round(hours / 24);
           setUploadDate(`${days} day${days > 1 ? "s" : ""} ago`);
         }
       }

@@ -1,7 +1,7 @@
 import { IoTelescopeSharp } from "react-icons/io5";
 import StyledVideolist from "./video-list.styled";
 import { useVideos } from "../hooks";
-import VideoCard from "./VideoCard";
+import { VideoCard } from "../../../components";
 
 export default function Explore() {
   const videos = useVideos("/video/a");

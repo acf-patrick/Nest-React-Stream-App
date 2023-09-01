@@ -83,6 +83,7 @@ function App() {
         )}
         <GlobalStyles />
         <RouterProvider router={router} />
+        <div id="modal-portal"></div>
       </ThemeProvider>
     </ThemeContext.Provider>
   );

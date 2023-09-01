@@ -1,9 +1,10 @@
 import { MdVideoLibrary } from "react-icons/md";
 import { PiVideo } from "react-icons/pi";
 import { styled } from "styled-components";
-import VideoCard from "./VideoCard";
+import { VideoCard, UploadVideoModal } from "../../../components";
 import StyledVideolist from "./video-list.styled";
 import { darken, lighten, transparentize } from "polished";
+import { useState } from "react";
 import { useVideos } from "../hooks";
 
 const StyledNewVideoButton = styled.button`
@@ -41,9 +42,9 @@ const StyledNewVideoButton = styled.button`
   }
 `;
 
-const NewVideoButton = () => {
+const NewVideoButton = (props: { toggleModal: () => void }) => {
   return (
-    <StyledNewVideoButton>
+    <StyledNewVideoButton onClick={props.toggleModal}>
       <span className="plus">
         <PiVideo />
       </span>
@@ -54,9 +55,11 @@ const NewVideoButton = () => {
 
 export default function UsersVideos() {
   const videos = useVideos("/video");
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div>
+      {showModal && <UploadVideoModal onClose={() => setShowModal(false)} />}
       <h1>
         <span>Your videos</span>
         <MdVideoLibrary />
@@ -68,7 +71,7 @@ export default function UsersVideos() {
           </li>
         ))}
         <li>
-          <NewVideoButton />
+          <NewVideoButton toggleModal={() => setShowModal(true)} />
         </li>
       </StyledVideolist>
     </div>

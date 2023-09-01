@@ -33,6 +33,9 @@ const themes = {
     inputWidth: "280px",
   },
   swipperTimeout: 1000,
+  modal: {
+    width: "480px",
+  },
 };
 
 export default themes;
