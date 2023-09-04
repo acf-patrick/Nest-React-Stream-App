@@ -19,6 +19,12 @@ const StyledCard = styled.div`
   border-radius: 15px;
   overflow: hidden;
   transition: box-shadow 500ms;
+  display: flex;
+  flex-direction: column;
+
+  & > div:last-of-type {
+    flex-grow: 1;
+  }
 
   &:hover {
     box-shadow: 0 1px 15px
@@ -173,7 +179,11 @@ export default function VideoCard(props: CardProps) {
       const hours = min / 60;
       if (hours < 1) {
         const elapsed = Math.round(hours);
-        setUploadDate(`${elapsed} minute${elapsed > 1 ? "s" : ""} ago`);
+        setUploadDate(
+          elapsed === 0
+            ? "Just now"
+            : `${elapsed} minute${elapsed > 1 ? "s" : ""} ago`
+        );
       } else {
         if (hours < 24) {
           const elapsed = Math.round(hours);

@@ -31,7 +31,6 @@ describe('VideoController', () => {
       uploadDate: new Date(),
       userId: 'user_id',
       video: 'file_name',
-      length: null,
     };
     videoService.readOneVideo.mockResolvedValue(record);
 
@@ -49,7 +48,6 @@ describe('VideoController', () => {
       uploadDate: new Date(),
       userId: 'user_id',
       video: 'file_name',
-      length: null,
     };
     videoService.update.mockImplementation(
       async (id: string, video: PostVideoDto) => {
