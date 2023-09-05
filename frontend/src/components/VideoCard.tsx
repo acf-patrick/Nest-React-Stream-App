@@ -10,6 +10,7 @@ type CardProps = {
   coverImage: string;
   uploadDate: Date;
   userId: string;
+  length?: string;
   hideUserData?: boolean;
 };
 
@@ -23,9 +24,9 @@ const StyledCard = styled.div`
   flex-direction: column;
 
   background: ${({ theme }) =>
-      theme.theme === "light"
-        ? darken(0.1, theme.colors.background)
-        : lighten(0.1, theme.colors.background)};
+    theme.theme === "light"
+      ? darken(0.1, theme.colors.background)
+      : lighten(0.1, theme.colors.background)};
 
   &:hover {
     box-shadow: 0 1px 15px
@@ -68,6 +69,17 @@ const StyledCard = styled.div`
   img {
     width: 100%;
     object-fit: contain;
+  }
+
+  .duration {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border-radius: 7px;
+    font-size: 0.75rem;
+    padding: 5px 10px;
+    color: white;
+    background-color: #00000060;
   }
 
   .play {
@@ -204,6 +216,7 @@ export default function VideoCard(props: CardProps) {
   return (
     <StyledCard>
       <div>
+        {props.length && <div className="duration">{props.length}</div>}
         <img src={`http://localhost:3000/videos/${props.coverImage}`} alt="" />
         <button className="play">
           <FaPlay />

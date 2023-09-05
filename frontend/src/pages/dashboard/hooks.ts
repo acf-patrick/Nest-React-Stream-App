@@ -8,6 +8,7 @@ type Video = {
   coverImage: string;
   uploadDate: Date;
   userId: string;
+  length?: string;
 };
 
 export function useVideos(endpoint: string) {
@@ -24,10 +25,27 @@ export function useVideos(endpoint: string) {
 
       if (res.data) {
         setVideos(
-          res.data.map((video: Video) => ({
-            ...video,
-            uploadDate: new Date(video.uploadDate),
-          }))
+          res.data.map((video: any) => {
+            if (video.length) {
+              const duration = video.length as number;
+              if (duration >= 60) {
+                const min = Math.round(duration / 60);
+                if (min >= 60) {
+                  const hour = Math.round(min / 60);
+                  video.length = `${hour} h`;
+                } else {
+                  video.length = `${min} min`;
+                }
+              } else {
+                video.length = `${duration} sec`;
+              }
+            }
+
+            return {
+              ...video,
+              uploadDate: new Date(video.uploadDate),
+            };
+          })
         );
       }
     };
