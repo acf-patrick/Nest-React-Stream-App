@@ -281,8 +281,9 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
     size: string;
   } | null>(null);
   const [upload, setUpload] = useState<{
+    started: boolean;
     progress: number;
-    total?: number;
+    total: number;
   } | null>(null);
 
   const container = document.querySelector("#modal-portal")!;
@@ -324,9 +325,16 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
           Authorization: `Bearer ${token}`,
         },
         onUploadProgress(e) {
-          setUpload({
-            progress: e.loaded,
-            total: e.total,
+          setUpload((upload) => {
+            if (upload) {
+              return {
+                started: true,
+                progress: e.loaded > upload.total ? upload.total : e.loaded,
+                total: upload.total,
+              };
+            }
+
+            return null;
           });
         },
       })
@@ -414,17 +422,15 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
                 <div>
                   <span>{videoFile.name}</span>
                   <span className="video__size">{videoFile.size}</span>
-                  {upload && (
+                  {upload && upload.started && (
                     <div className="video__upload">
                       <progress
                         value={upload.progress}
                         max={upload.total}
                       ></progress>
-                      {upload.total && (
-                        <span>
-                          {100 * Math.round(upload.progress / upload.total)} %
-                        </span>
-                      )}
+                      <span>
+                        {Math.round((100 * upload.progress) / upload.total)} %
+                      </span>
                     </div>
                   )}
                 </div>
@@ -456,6 +462,12 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
                   } else {
                     videoSize = `${size} Bytes`;
                   }
+
+                  setUpload({
+                    started: false,
+                    progress: 0,
+                    total: size,
+                  });
 
                   setVideoFile({
                     name: clampName(files[0].name),

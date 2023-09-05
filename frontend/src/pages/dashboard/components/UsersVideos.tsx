@@ -54,12 +54,19 @@ const NewVideoButton = (props: { toggleModal: () => void }) => {
 };
 
 export default function UsersVideos() {
-  const videos = useVideos("/video");
+  const { videos, fetchData: fetchVideos } = useVideos("/video");
   const [showModal, setShowModal] = useState(false);
 
   return (
     <div>
-      {showModal && <UploadVideoModal onClose={() => setShowModal(false)} />}
+      {showModal && (
+        <UploadVideoModal
+          onClose={() => {
+            setShowModal(false);
+            fetchVideos();
+          }}
+        />
+      )}
       <h1>
         <span>Your videos</span>
         <MdVideoLibrary />

@@ -22,9 +22,10 @@ const StyledCard = styled.div`
   display: flex;
   flex-direction: column;
 
-  & > div:last-of-type {
-    flex-grow: 1;
-  }
+  background: ${({ theme }) =>
+      theme.theme === "light"
+        ? darken(0.1, theme.colors.background)
+        : lighten(0.1, theme.colors.background)};
 
   &:hover {
     box-shadow: 0 1px 15px
@@ -49,6 +50,10 @@ const StyledCard = styled.div`
     border-bottom: 2px solid ${({ theme }) => theme.colors.quaternary};
     background-color: grey;
     position: relative;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
     img {
       max-height: 280px;
@@ -58,10 +63,6 @@ const StyledCard = styled.div`
 
   & > div:last-of-type {
     padding: 0.5rem 1rem 2rem;
-    background: ${({ theme }) =>
-      theme.theme === "light"
-        ? darken(0.1, theme.colors.background)
-        : lighten(0.1, theme.colors.background)};
   }
 
   img {

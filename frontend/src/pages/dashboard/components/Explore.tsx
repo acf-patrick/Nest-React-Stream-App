@@ -4,7 +4,7 @@ import { useVideos } from "../hooks";
 import { VideoCard } from "../../../components";
 
 export default function Explore() {
-  const videos = useVideos("/video/a");
+  const { videos } = useVideos("/video/a");
 
   return (
     <div>

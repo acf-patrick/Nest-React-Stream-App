@@ -14,7 +14,7 @@ export function useVideos(endpoint: string) {
   const [videos, setVideos] = useState<Video[]>([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchData = () => {
     const fetch = async (token: string) => {
       const res = await api.get(endpoint, {
         headers: {
@@ -62,7 +62,11 @@ export function useVideos(endpoint: string) {
       console.error(err);
       navigate("/login");
     });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
-  return videos;
+  return { videos, fetchData };
 }
