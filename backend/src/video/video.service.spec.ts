@@ -15,6 +15,9 @@ describe('VideoService', () => {
     const prismaService = prisma as unknown as PrismaService;
 
     service = new VideoService(prismaService);
+    jest
+      .spyOn(service, 'computeVideoLength')
+      .mockImplementation(async (video) => null);
   });
 
   beforeEach(() => {
@@ -33,6 +36,7 @@ describe('VideoService', () => {
       id: '',
       uploadDate: new Date(),
       userId: '',
+      length: null,
     };
     prisma.video.create.mockResolvedValue(record);
 
@@ -63,6 +67,7 @@ describe('VideoService', () => {
       id: videoId,
       uploadDate: new Date(),
       userId: '',
+      length: null,
     };
 
     prisma.video.findUnique.mockResolvedValue(record);
@@ -99,6 +104,7 @@ describe('VideoService', () => {
       uploadDate: new Date(),
       userId: 'user_id',
       video: 'file_name',
+      length: null,
     };
     prisma.video.upsert.mockResolvedValue(record);
 

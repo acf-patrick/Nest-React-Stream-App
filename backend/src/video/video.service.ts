@@ -15,10 +15,32 @@ import { join } from 'path';
 import * as fs from 'fs';
 import getVideoDurationInSeconds from 'get-video-duration';
 import { ConfigService } from '@nestjs/config';
+import { Video } from '@prisma/client';
 
 @Injectable()
 export class VideoService {
   constructor(private prisma: PrismaService) {}
+
+  async computeVideoLength(video: Video) {
+    try {
+      const duration = await getVideoDurationInSeconds(
+        join(process.cwd(), `public/videos/${video.video}`),
+      );
+      await this.prisma.video.update({
+        where: {
+          id: video.id,
+        },
+        data: {
+          length: duration,
+        },
+      });
+      return duration;
+    } catch (e) {
+      console.error(e);
+    }
+
+    return null;
+  }
 
   async createVideo(video: PostVideoDto) {
     const user = await this.prisma.user.findUnique({
@@ -49,11 +71,15 @@ export class VideoService {
       where: { id },
     });
 
-    if (video) {
-      return video;
+    if (!video) {
+      throw new NotFoundException(`No video with ID ${id}`);
     }
 
-    throw new NotFoundException(`No video with ID ${id}`);
+    if (!video.length) {
+      video.length = await this.computeVideoLength(video);
+    }
+
+    return video;
   }
 
   async getUsersVideos(email: string) {
@@ -68,17 +94,31 @@ export class VideoService {
       throw new NotFoundException(`No user with email ${email} found`);
     }
 
-    return await this.prisma.video.findMany({
+    const videos = await this.prisma.video.findMany({
       where: {
         userId: user.id,
       },
     });
+
+    for (let video of videos) {
+      if (!video.length) {
+        video.length = await this.computeVideoLength(video);
+      }
+    }
+
+    return videos;
   }
 
   async readVideos() {
     const videos = await this.prisma.video.findMany({
       include: { createdBy: true },
     });
+
+    for (let video of videos) {
+      if (!video.length) {
+        video.length = await this.computeVideoLength(video);
+      }
+    }
 
     return videos;
   }

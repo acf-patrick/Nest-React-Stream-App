@@ -11,6 +11,7 @@ describe('VideoController', () => {
 
   beforeAll(async () => {
     videoService = mockDeep<VideoService>();
+    videoService.computeVideoLength.mockImplementation(async (video) => null);
     controller = new VideoController(videoService as unknown as VideoService);
   });
 
@@ -31,6 +32,7 @@ describe('VideoController', () => {
       uploadDate: new Date(),
       userId: 'user_id',
       video: 'file_name',
+      length: null,
     };
     videoService.readOneVideo.mockResolvedValue(record);
 
@@ -48,6 +50,7 @@ describe('VideoController', () => {
       uploadDate: new Date(),
       userId: 'user_id',
       video: 'file_name',
+      length: null,
     };
     videoService.update.mockImplementation(
       async (id: string, video: PostVideoDto) => {
