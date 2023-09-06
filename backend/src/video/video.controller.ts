@@ -24,15 +24,74 @@ import { PostVideoDto } from './dto/post-video.dto';
 import { PrismaClientExceptionFilter } from '../prisma-client-exception/prisma-client-exception.filter';
 import { AccesTokenGuard } from '../auth/guards/acces-token.guard';
 import { Request } from 'express';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('/api/v1/video')
-@UseGuards(AccesTokenGuard)
 @UseFilters(PrismaClientExceptionFilter)
 export class VideoController {
-  constructor(private readonly videoService: VideoService) {}
+  constructor(
+    private readonly videoService: VideoService,
+    private prisma: PrismaService,
+  ) {}
+
+  @Get('/a')
+  @UseGuards(AccesTokenGuard)
+  async readVideos(@Query('user') userId?: string) {
+    if (userId) {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          email: true,
+        },
+      });
+
+      if (!user) {
+        throw new BadRequestException(`No user with ID ${userId}`);
+      }
+
+      const videos = await this.videoService.getUsersVideos(user['email']);
+      if (!videos) {
+        throw new NotFoundException('No video found for this user');
+      }
+
+      return videos.map((record) => {
+        const { video, ...datas } = record;
+        return datas;
+      });
+    }
+
+    const videos = await this.videoService.readVideos();
+    if (!videos) {
+      throw new NotFoundException('No video found');
+    }
+
+    return videos.map((record) => {
+      const { video, ...datas } = record;
+      return datas;
+    });
+  }
+
+  @Get('/:id')
+  stream(@Param('id') id: string, @Res() res, @Req() req) {
+    return this.videoService.streamVideo(id, res, req);
+  }
 
   @Get()
-  async readUsersVideos(@Req() req: Request) {
+  @UseGuards(AccesTokenGuard)
+  async readUserVideo(@Req() req: Request, @Query('id') id: string) {
+    if (id) {
+      const record = await this.videoService.readOneVideo(id);
+      if (!record) {
+        throw new NotFoundException('Video non-existent.');
+      }
+
+      const { video, ...datas } = record;
+      return datas;
+    }
+
+    // return user's videos
     const user = req.user;
     if (!user) {
       throw new UnauthorizedException();
@@ -49,42 +108,15 @@ export class VideoController {
     });
   }
 
-  @Get('/a')
-  async readVideos() {
-    const videos = await this.videoService.readVideos();
-    if (!videos) {
-      throw new NotFoundException('No video found');
-    }
-
-    return videos.map((record) => {
-      const { video, ...datas } = record;
-      return datas;
-    });
-  }
-
-  @Get()
-  async readOneVideo(@Query('id') id: string) {
-    const record = await this.videoService.readOneVideo(id);
-    if (!record) {
-      throw new NotFoundException('Video non-existent.');
-    }
-
-    const { video, ...datas } = record;
-    return datas;
-  }
-
-  @Get('/:id')
-  stream(@Param('id') id: string, @Res() res, @Req() req) {
-    return this.videoService.streamVideo(id, res, req);
-  }
-
   @Put('/:id')
+  @UseGuards(AccesTokenGuard)
   update(@Param('id') id: string, @Body() video: PostVideoDto) {
     return this.videoService.update(id, video);
   }
 
   @Delete('/:id')
   @HttpCode(200)
+  @UseGuards(AccesTokenGuard)
   async delete(@Req() req: Request, @Param('id') id: string) {
     const email = req.user!['email'];
     return this.videoService.delete(id, email);
@@ -92,6 +124,7 @@ export class VideoController {
 
   @Post()
   @HttpCode(201)
+  @UseGuards(AccesTokenGuard)
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'video', maxCount: 1 },

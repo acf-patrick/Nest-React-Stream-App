@@ -224,6 +224,28 @@ const StyledModal = styled.div`
     }
   }
 
+  .cover-image {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding-left: 1rem;
+
+    & > div:first-of-type {
+      width: 64px;
+      height: 64px;
+      background: grey;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      overflow: hidden;
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+  }
+
   .video {
     display: flex;
     gap: 1rem;
@@ -275,11 +297,16 @@ const StyledModal = styled.div`
 `;
 
 export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
-  const [coverImage, setCoverImage] = useState("");
+  const [coverImage, setCoverImage] = useState<{
+    name: string;
+    url: string;
+  } | null>(null);
+
   const [videoFile, setVideoFile] = useState<{
     name: string;
     size: string;
   } | null>(null);
+
   const [upload, setUpload] = useState<{
     started: boolean;
     progress: number;
@@ -384,7 +411,12 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
             onClick={inputContainerOnClick}
           >
             {coverImage ? (
-              <span>{coverImage}</span>
+              <div className="cover-image">
+                <div>
+                  <img src={coverImage.url} alt="" />
+                </div>
+                <div>{coverImage.name}</div>
+              </div>
             ) : (
               <>
                 <div className="icon">
@@ -397,7 +429,10 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
               onChange={(e) => {
                 const files = e.currentTarget.files;
                 if (files && files.length > 0) {
-                  setCoverImage(clampName(files[0].name));
+                  setCoverImage({
+                    name: clampName(files[0].name),
+                    url: URL.createObjectURL(files[0]),
+                  });
                 }
               }}
               type="file"

@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 import api from "../api";
 import { darken, lighten } from "polished";
 import { FaPlay } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 type CardProps = {
   id: string;
@@ -150,7 +151,6 @@ const StyledCard = styled.div`
       padding: 2px;
       border: 2px solid ${({ theme }) => theme.colors.quaternary};
       background-color: ${({ theme }) => theme.colors.background};
-
       img {
         border-radius: 100%;
       }
@@ -165,6 +165,7 @@ export default function VideoCard(props: CardProps) {
   } | null>(null);
 
   const [uploadDate, setUploadDate] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -178,7 +179,7 @@ export default function VideoCard(props: CardProps) {
                 .map((name, i) => (i > 0 ? `${name[0].toUpperCase()}.` : name))
                 .join(" ")
             : name,
-        picture: res.data.avatar,
+        picture: res.data.avatar ? res.data.avatar : "/images/profile-pic.png",
       });
     };
 
@@ -213,12 +214,19 @@ export default function VideoCard(props: CardProps) {
     }
   }, []);
 
+  const playBtnOnClick = () => {
+    navigate(`/video/${props.id}`);
+  };
+
   return (
     <StyledCard>
       <div>
         {props.length && <div className="duration">{props.length}</div>}
-        <img src={`http://localhost:3000/videos/${props.coverImage}`} alt="" />
-        <button className="play">
+        <img
+          src={`${import.meta.env.VITE_BACKEND}/videos/${props.coverImage}`}
+          alt=""
+        />
+        <button className="play" onClick={playBtnOnClick}>
           <FaPlay />
         </button>
       </div>

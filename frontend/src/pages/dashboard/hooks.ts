@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
+import { AxiosError } from "axios";
 
 type Video = {
   id: string;
@@ -10,6 +11,59 @@ type Video = {
   userId: string;
   length?: string;
 };
+
+export function useVideo(id: string) {
+  const [video, setVideo] = useState<Video | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchVideo = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const { data } = await api.get(`/video?id=${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        data.uploadDate = new Date(data.uploadDate);
+        setVideo(data);
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          if (e.response?.status === 401) {
+            try {
+              const refresh = localStorage.getItem("refresh");
+              const res = await api.get(`/auth/refresh-tokens`, {
+                headers: {
+                  Authorization: `Bearer ${refresh}`,
+                },
+              });
+
+              const { refreshToken, accessToken } = res.data;
+              localStorage.setItem("refresh", refreshToken);
+              localStorage.setItem("token", accessToken);
+
+              const { data } = await api.get(`/video?id=${id}`, {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              });
+              data.uploadDate = new Date(data.uploadDate);
+              setVideo(data);
+            } catch (e) {
+              console.error(e);
+              localStorage.clear();
+              navigate("/login");
+            }
+          }
+        }
+      }
+    };
+
+    fetchVideo();
+  }, [id]);
+
+  return video;
+}
 
 export function useVideos(endpoint: string) {
   const [videos, setVideos] = useState<Video[]>([]);
@@ -83,8 +137,10 @@ export function useVideos(endpoint: string) {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (endpoint) {
+      fetchData();
+    }
+  }, [endpoint]);
 
   return { videos, fetchData };
 }

@@ -4,6 +4,7 @@ import { VideoService } from './video.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { Video } from '@prisma/client';
 import { PostVideoDto } from './dto/post-video.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 describe('VideoController', () => {
   let controller: VideoController;
@@ -12,7 +13,10 @@ describe('VideoController', () => {
   beforeAll(async () => {
     videoService = mockDeep<VideoService>();
     videoService.computeVideoLength.mockImplementation(async (video) => null);
-    controller = new VideoController(videoService as unknown as VideoService);
+    controller = new VideoController(
+      videoService as unknown as VideoService,
+      {} as unknown as PrismaService,
+    );
   });
 
   it('should be defined', () => {
@@ -37,9 +41,15 @@ describe('VideoController', () => {
     videoService.readOneVideo.mockResolvedValue(record);
 
     const { video, ...datas } = record;
-    await expect(controller.readOneVideo(record.id)).resolves.toStrictEqual(
-      datas,
-    );
+    const req = {
+      user: {
+        email: 'user@mail.com',
+      },
+    } as unknown as Request;
+
+    await expect(
+      controller.readUserVideo(req, record.id),
+    ).resolves.toStrictEqual(datas);
   });
 
   it('should update one video record', async () => {

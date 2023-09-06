@@ -31,6 +31,13 @@ const themes = {
   },
   sizes: {
     inputWidth: "280px",
+    video: {
+      maxHeight: "360px",
+      cover: {
+        width: "160px",
+        height: "96px",
+      },
+    },
   },
   swipperTimeout: 1000,
   modal: {

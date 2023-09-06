@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "concurrently \"cd backend && yarn start:dev\" \"cd frontend && yarn dev\"",
+    "dev": "concurrently \"cd backend && yarn start:dev\" \"cd frontend && yarn dev --host\"",
     "postinstall": "cd frontend && yarn && cd ../backend && yarn"
   },
   "devDependencies": {

@@ -6,7 +6,7 @@ import {
   ResetPassword,
   SetNewPassword,
 } from "./pages/forgot-password/components";
-import { Explore, UsersVideos } from "./pages/dashboard/components";
+import { Explore, UsersVideos, Video } from "./pages/dashboard/components";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: "explore",
         element: <Explore />,
+      },
+      {
+        path: "/video/:id",
+        element: <Video />,
       },
     ],
   },

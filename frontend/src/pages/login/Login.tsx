@@ -52,7 +52,7 @@ const Card = styled.div`
     border: none;
     background: ${({ theme }) => theme.colors.secondary};
     padding: 0.5rem 1rem;
-    color: ${({ theme }) => theme.colors.opposite};
+    color: ${({ theme }) => theme.colors.primary};
 
     &:focus {
       outline: none;
@@ -98,6 +98,10 @@ const Card = styled.div`
     gap: 2rem;
     justify-content: space-between;
     font-size: 0.75rem;
+
+    * {
+      color: ${({ theme }) => theme.colors.secondary};
+    }
   }
 
   .error {
