@@ -1,4 +1,3 @@
-
 <p align="center" >
   <img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" />
   <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" width="200" alt="React Logo" />
@@ -9,9 +8,13 @@
 </p>
 
 ## Description
+
 Basically this application allows user to post and stream videos.
 
+![screenshot](/screenshot.png)
+
 ### Key features
+
 - [x] User authentication
 - [x] Mailing for forgotten password cases
 - [x] By parts media streaming using Multer
