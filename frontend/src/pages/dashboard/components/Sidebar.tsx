@@ -3,8 +3,8 @@ import { AiTwotoneHeart } from "react-icons/ai";
 import { FaRegCompass } from "react-icons/fa";
 import { BsGear } from "react-icons/bs";
 import { IoExitOutline } from "react-icons/io5";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Logo } from "../../../components";
 import { rgba } from "polished";
 import api from "../../../api";
@@ -159,7 +159,18 @@ function Sidebar() {
   ];
 
   const navigate = useNavigate();
-  const [activeLink, setActiveLink] = useState(sections[0].links[0].label);
+  const location = useLocation();
+
+  const activeLink = useMemo(() => {
+    const path = location.pathname;
+    for (let section of sections) {
+      const link = section.links.find((link) => path === link.to);
+      if (link) {
+        return link.label;
+      }
+    }
+    return null;
+  }, [location]);
 
   return (
     <Container>
@@ -178,21 +189,13 @@ function Sidebar() {
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      setActiveLink(link.label);
                       link.action!();
                     }}
                   >
                     {link.label}
                   </a>
                 ) : (
-                  <Link
-                    to={link.to!}
-                    onClick={() => {
-                      setActiveLink(link.label);
-                    }}
-                  >
-                    {link.label}
-                  </Link>
+                  <Link to={link.to!}>{link.label}</Link>
                 )}
               </StyledLink>
             ))}

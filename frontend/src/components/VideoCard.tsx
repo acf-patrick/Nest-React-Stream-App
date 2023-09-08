@@ -43,9 +43,11 @@ const StyledCard = styled.div`
   }
 
   #title {
+    display: block;
     letter-spacing: normal;
     font-weight: bold;
     font-size: 1rem;
+    min-height: 3rem;
   }
 
   & > div:first-of-type {

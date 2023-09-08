@@ -3,6 +3,7 @@ import { Logo, Input } from "../../components";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
+import { darken, lighten } from "polished";
 
 const errorShowing = keyframes`
   from {
@@ -35,6 +36,10 @@ const Card = styled.div`
 
   input {
     border-bottom: 1px solid ${({ theme }) => theme.colors.secondaryVariant};
+    color: ${({ theme }) =>
+      theme.theme === "light"
+        ? darken(0.25, theme.colors.primary)
+        : lighten(0.25, theme.colors.primary)};
   }
 
   form {
@@ -56,7 +61,8 @@ const Card = styled.div`
     grid-template-columns: 1fr 1fr;
   }
 
-  .confirm-pwd {
+  .confirm-pwd,
+  .email-input {
     position: relative;
   }
 
@@ -65,6 +71,7 @@ const Card = styled.div`
     animation: ${errorShowing} 500ms both;
     margin: unset;
     font-size: 0.95rem;
+    font-weight: bold;
     position: absolute;
     top: -0.75rem;
     right: 0;
@@ -103,6 +110,8 @@ const Image = styled.div`
 
 function Signup() {
   const [passwordMismatch, setPasswordMismatch] = useState(false);
+  const [emailInUse, setEmailInUse] = useState(false);
+
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -134,6 +143,10 @@ function Signup() {
       };
 
       signup().catch((err) => {
+        if (err.response.status === 409) {
+          setEmailInUse(true);
+        }
+
         console.error(err);
       });
     }
@@ -165,7 +178,16 @@ function Signup() {
               <Input label="First Name" name="first-name" id="first_name" />
               <Input label="Last Name" name="last-name" id="last_name" />
             </div>
-            <Input label="Email" name="email" id="email" type="email" />
+            <div className="email-input">
+              {emailInUse && <p className="error">Email already in use</p>}
+              <Input
+                label="Email"
+                name="email"
+                id="email"
+                type="email"
+                onChange={() => setEmailInUse(false)}
+              />
+            </div>
             <Input
               label="Password"
               name="password"

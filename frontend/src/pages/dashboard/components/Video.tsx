@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { PiVideo } from "react-icons/pi";
-import { useVideo, useVideos } from "../hooks";
+import { useVideo, useVideos } from "../../../hooks";
 import { useMemo, useEffect, useState, useRef } from "react";
 import { styled } from "styled-components";
 import { darken, lighten, transparentize } from "polished";
@@ -60,12 +60,28 @@ const StyledVideoContainer = styled.div`
     max-height: calc(100vh - 180px);
     overflow-y: auto;
 
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        background: ${({ theme }) =>
+          theme.theme === "light"
+            ? darken(0.5, theme.colors.background)
+            : lighten(0.5, theme.colors.background)};
+      }
+    }
+
     &::-webkit-scrollbar {
-      display: none;
+      width: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background: transparent;
+      transition: background 300ms;
     }
 
     ul {
       padding: unset;
+      margin: unset;
       list-style: none;
     }
 
@@ -172,6 +188,10 @@ export default function Video() {
         });
       })
       .catch((err) => console.error(err));
+
+    return () => {
+      document.title = "Streamly";
+    };
   }, [video, id]);
 
   if (!video) {
@@ -206,12 +226,11 @@ export default function Video() {
             >
               <div></div>
             </StyledUserPicture>
-
             <div className="name">{user.name}</div>
           </div>
         )}
       </div>
-      {moreVideos && (
+      {moreVideos && moreVideos.length > 1 && (
         <div>
           <div className="more">
             <ul>
@@ -232,7 +251,7 @@ export default function Video() {
               })}
             </ul>
           </div>
-          <p>{moreVideos.length} videos found ✨</p>
+          <p>{moreVideos.length - 1} other videos found ✨</p>
         </div>
       )}
     </StyledVideoContainer>

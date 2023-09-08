@@ -231,7 +231,7 @@ function Header() {
           <input
             type="text"
             id="search-input"
-            placeholder="Search everything..."
+            placeholder="Search video..."
           />
         </div>
       </div>

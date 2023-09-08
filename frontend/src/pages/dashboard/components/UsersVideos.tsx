@@ -5,7 +5,7 @@ import { VideoCard, UploadVideoModal } from "../../../components";
 import StyledVideolist from "./video-list.styled";
 import { darken, lighten, transparentize } from "polished";
 import { useState } from "react";
-import { useVideos } from "../hooks";
+import { useVideos } from "../../../hooks";
 
 const StyledNewVideoButton = styled.button`
   display: flex;
@@ -54,7 +54,7 @@ const NewVideoButton = (props: { toggleModal: () => void }) => {
 };
 
 export default function UsersVideos() {
-  const { videos, fetchData: fetchVideos } = useVideos("/video");
+  const { videos, fetchVideos } = useVideos("/video");
   const [showModal, setShowModal] = useState(false);
 
   return (
