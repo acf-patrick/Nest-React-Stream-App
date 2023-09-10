@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -37,7 +37,7 @@ export class AuthService {
       where: { token: refreshToken },
     });
     if (!record) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new BadRequestException('Invalid refresh token');
     }
 
     await this.prisma.refreshToken.deleteMany({

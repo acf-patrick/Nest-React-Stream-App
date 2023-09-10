@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "./api";
 
@@ -14,8 +14,12 @@ type Video = {
 export function useVideo(id: string) {
   const [video, setVideo] = useState<Video | null>(null);
   const navigate = useNavigate();
+  const fetched = useRef(false);
 
   useEffect(() => {
+    if (fetched.current) return;
+    fetched.current = true;
+
     const fetchVideo = async () => {
       const { data } = await api.get(`/video?id=${id}`);
       data.uploadDate = new Date(data.uploadDate);
@@ -34,6 +38,7 @@ export function useVideo(id: string) {
 export function useVideos(endpoint: string) {
   const [videos, setVideos] = useState<Video[]>([]);
   const navigate = useNavigate();
+  const fetched = useRef(false);
 
   const fetchDatas = async () => {
     const { data } = await api.get(endpoint);
@@ -73,8 +78,9 @@ export function useVideos(endpoint: string) {
   };
 
   useEffect(() => {
-    if (endpoint) {
+    if (endpoint && !fetched.current) {
       fetchVideos();
+      fetched.current = true;
     }
   }, [endpoint]);
 

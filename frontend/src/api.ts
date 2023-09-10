@@ -6,21 +6,31 @@ const api = axios.create({
 
 api.interceptors.request.use(async (config) => {
   const token = localStorage.getItem("token");
-  if (token) {
+  const refresh = localStorage.getItem("refresh");
+
+  if (token && config.headers.Authorization !== `Bearer ${refresh}`) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (res) => res,
   async (error: AxiosError) => {
     const config = error.config!;
-    const req: any = config;
-    console.log(req.retry);
-    if (error.response?.status === 401 && !req.retry) {
-      req.retry = true;
-      const res = await api.get("/auth/refresh-tokens");
+    const req: {
+      _retry?: boolean;
+    } & typeof config = config;
+
+    if (error.response?.status === 401 && !req._retry) {
+      req._retry = true;
+
+      const refresh = localStorage.getItem("refresh");
+      const res = await api.get("/auth/refresh-tokens", {
+        headers: {
+          Authorization: `Bearer ${refresh}`,
+        },
+      });
       const { accessToken, refreshToken } = res.data;
 
       localStorage.setItem("token", accessToken);
@@ -33,4 +43,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default api

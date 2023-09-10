@@ -130,23 +130,8 @@ function Sidebar() {
           label: "Log out",
           icon: <IoExitOutline />,
           action() {
-            const token = localStorage.getItem("refresh");
-            const logout = async () => {
-              const res = await api.get("/auth/refresh-tokens", {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
-
-              const { accessToken } = res.data;
-              await api.get("/auth/logout", {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              });
-            };
-
-            logout()
+            api
+              .get("/auth/logout")
               .then(() => {
                 localStorage.clear();
                 navigate("/login");
@@ -190,8 +175,7 @@ function Sidebar() {
                     onClick={(e) => {
                       e.preventDefault();
                       link.action!();
-                    }}
-                  >
+                    }}>
                     {link.label}
                   </a>
                 ) : (
