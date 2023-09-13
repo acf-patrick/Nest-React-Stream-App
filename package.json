@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "cd frontend && yarn build && cd ../backend && yarn build && cp -r ../frontend/dist/* dist/public",
+    "build": "cd frontend && yarn build && cd ../backend && yarn build && mkdir -p dist/public && cp -r ../frontend/dist/* dist/public",
     "dev": "concurrently \"cd backend && yarn start:dev\" \"cd frontend && yarn dev --host\"",
     "start": "cd backend && yarn start:prod",
     "postinstall": "cd frontend && yarn && cd ../backend && yarn"
