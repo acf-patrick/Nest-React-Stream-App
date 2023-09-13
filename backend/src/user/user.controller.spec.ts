@@ -58,6 +58,20 @@ describe('UserController', () => {
     expect(controller).toBeDefined();
   });
 
+  it('should be ok on user update', () => {
+    jest.spyOn(userService, 'updateUser').mockReturnValue(Promise.resolve());
+    expect(
+      controller.updateUserDatas(
+        'id',
+        {
+          email: 'user@mail.com',
+          fullname: 'user',
+        },
+        {},
+      ),
+    ).resolves.toBeDefined();
+  });
+
   it('get one user', async () => {
     await expect(controller.getUser(users[0].id)).resolves.toBeDefined();
   });
