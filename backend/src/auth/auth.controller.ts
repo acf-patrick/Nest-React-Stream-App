@@ -22,7 +22,7 @@ import { ResetPasswordService } from './reset-password.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { Request } from 'express';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
-import { AccesTokenGuard } from './guards/acces-token.guard';
+import { AccessTokenGuard } from './guards/acces-token.guard';
 
 @Controller('/api/v1/auth')
 @UseFilters(PrismaClientExceptionFilter)
@@ -101,7 +101,7 @@ export class AuthController {
     };
   }
 
-  @UseGuards(AccesTokenGuard)
+  @UseGuards(AccessTokenGuard)
   @Get('/logout')
   async logout(@Req() req: Request, @Ip() ipAddress: string) {
     const user = req.user!;

@@ -22,7 +22,7 @@ import { VideoService } from './video.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { PostVideoDto } from './dto/post-video.dto';
 import { PrismaClientExceptionFilter } from '../prisma-client-exception/prisma-client-exception.filter';
-import { AccesTokenGuard } from '../auth/guards/acces-token.guard';
+import { AccessTokenGuard } from '../auth/guards/acces-token.guard';
 import { Request } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -35,7 +35,7 @@ export class VideoController {
   ) {}
 
   @Get('/a')
-  @UseGuards(AccesTokenGuard)
+  @UseGuards(AccessTokenGuard)
   async readVideos(@Query('user') userId?: string) {
     if (userId) {
       const user = await this.prisma.user.findUnique({
@@ -79,7 +79,7 @@ export class VideoController {
   }
 
   @Get()
-  @UseGuards(AccesTokenGuard)
+  @UseGuards(AccessTokenGuard)
   async readUserVideo(@Req() req: Request, @Query('id') id: string) {
     if (id) {
       const record = await this.videoService.readOneVideo(id);
@@ -109,14 +109,14 @@ export class VideoController {
   }
 
   @Put('/:id')
-  @UseGuards(AccesTokenGuard)
+  @UseGuards(AccessTokenGuard)
   update(@Param('id') id: string, @Body() video: PostVideoDto) {
     return this.videoService.update(id, video);
   }
 
   @Delete('/:id')
   @HttpCode(200)
-  @UseGuards(AccesTokenGuard)
+  @UseGuards(AccessTokenGuard)
   async delete(@Req() req: Request, @Param('id') id: string) {
     const email = req.user!['email'];
     return this.videoService.delete(id, email);
@@ -124,7 +124,7 @@ export class VideoController {
 
   @Post()
   @HttpCode(201)
-  @UseGuards(AccesTokenGuard)
+  @UseGuards(AccessTokenGuard)
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'video', maxCount: 1 },

@@ -1,10 +1,46 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { UpdateUserDto } from './dto/update-user.dto';
+import * as fs from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
+
+  async updateUser(id: string, data: UpdateUserDto) {
+    let password: string | undefined;
+    if (data.password) {
+      const salt = await bcrypt.genSalt();
+      password = await bcrypt.hash(data.password, salt);
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        avatar: true,
+      },
+    });
+    if (user?.avatar && data.avatar) {
+      const file = join(process.cwd(), `./public/images/${user.avatar}`);
+      fs.unlink(file, (err) => {
+        if (err) {
+          console.error(err);
+        }
+      });
+    }
+
+    await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        ...data,
+        password,
+      },
+    });
+  }
 
   async getOne(id: string) {
     return await this.prisma.user.findUnique({

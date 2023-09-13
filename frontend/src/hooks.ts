@@ -86,3 +86,22 @@ export function useVideos(endpoint: string) {
 
   return { videos, fetchVideos };
 }
+
+type User = {
+  email: string;
+  fullname: string;
+  avatar: string | null;
+};
+
+export function useUserData() {
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    api
+      .get(`/user/${userId}`)
+      .then((res) => setUser(res.data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  return user;
+}

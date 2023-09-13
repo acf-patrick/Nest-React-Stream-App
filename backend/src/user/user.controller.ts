@@ -1,15 +1,23 @@
 import {
-  Get,
-  Param,
-  NotFoundException,
-  Controller,
   Body,
-  Post,
+  Controller,
   ForbiddenException,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { ResetPasswordService } from '../auth/reset-password.service';
 import { ConfigService } from '@nestjs/config';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { AccessTokenGuard } from '../auth/guards/acces-token.guard';
+import { ResetPasswordService } from '../auth/reset-password.service';
+import { SetPasswordDto } from './dto/set-password.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserService } from './user.service';
 
 @Controller('/api/v1/user')
 export class UserController {
@@ -18,6 +26,25 @@ export class UserController {
     private codeService: ResetPasswordService,
     private configService: ConfigService,
   ) {}
+
+  @Patch(':id')
+  @UseGuards(AccessTokenGuard)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'avatar', maxCount: 1 }]))
+  async updateUserDatas(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserDto,
+    @UploadedFiles()
+    files: {
+      avatar?: Express.Multer.File[];
+    },
+  ) {
+    const picture = files.avatar?.at(0);
+    await this.userService.updateUser(id, {
+      ...dto,
+      avatar: picture?.filename,
+    });
+    return 'User datas updated';
+  }
 
   @Get(':id')
   async getUser(@Param('id') id: string) {
@@ -35,7 +62,7 @@ export class UserController {
   }
 
   @Post('/password')
-  async setPassword(@Body() dto: { code: string; password: string }) {
+  async setPassword(@Body() dto: SetPasswordDto) {
     if (!this.codeService.validateCode(dto.code)) {
       throw new ForbiddenException('Invalid code provided.');
     }
