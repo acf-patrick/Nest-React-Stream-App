@@ -239,7 +239,7 @@ export default function Video() {
                   <li key={i}>
                     <VideoListItem
                       id={video.id}
-                      cover={`${import.meta.env.VITE_BACKEND}/videos/${
+                      cover={`${import.meta.env.VITE_DATAS_ENDPOINT}/videos/${
                         video.coverImage
                       }`}
                       title={video.title}

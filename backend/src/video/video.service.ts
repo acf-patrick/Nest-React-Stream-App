@@ -24,7 +24,7 @@ export class VideoService {
   async computeVideoLength(video: Video) {
     try {
       const duration = await getVideoDurationInSeconds(
-        join(process.cwd(), `public/videos/${video.video}`),
+        join(__dirname, '../..', `./public/videos/${video.video}`),
       );
       await this.prisma.video.update({
         where: {
@@ -135,7 +135,11 @@ export class VideoService {
       const { range } = req.headers;
       if (range) {
         const { video } = data;
-        const videoPath = join(process.cwd(), `./public/videos/${video}`);
+        const videoPath = join(
+          __dirname,
+          '../..',
+          `./public/datas/videos/${video}`,
+        );
         const videoInfo = statSync(videoPath);
         const CHUNK_SIZE = 1e6; // 1Mb
         const start = Number(range.replace(/\D/g, ''));
@@ -206,12 +210,15 @@ export class VideoService {
     }
 
     [video.video, video.coverImage].forEach((path) => {
-      fs.unlink(join(process.cwd(), `./public/videos/${path}`), (err) => {
-        if (err) {
-          console.error(err);
-          throw new InternalServerErrorException(err);
-        }
-      });
+      fs.unlink(
+        join(__dirname, '../..', `./public/datas/videos/${path}`),
+        (err) => {
+          if (err) {
+            console.error(err);
+            throw new InternalServerErrorException(err);
+          }
+        },
+      );
     });
 
     await this.prisma.video.delete({ where: { id } });

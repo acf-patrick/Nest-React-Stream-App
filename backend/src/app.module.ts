@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
+      exclude: [join(__dirname, '..', 'public/datas/videos')],
     }),
     ConfigModule.forRoot({
       isGlobal: true,

@@ -1,8 +1,7 @@
+import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import { Header } from "../../components";
 import { Sidebar } from "./components";
-import { Outlet } from "react-router-dom";
-import { useEffect } from "react";
 
 const Container = styled.div`
   display: flex;

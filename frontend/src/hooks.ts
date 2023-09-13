@@ -18,7 +18,7 @@ export function useVideo(id: string) {
 
   useEffect(() => {
     if (fetched.current) return;
-    fetched.current = true;
+    // fetched.current = true;
 
     const fetchVideo = async () => {
       const { data } = await api.get(`/video?id=${id}`);
@@ -80,7 +80,7 @@ export function useVideos(endpoint: string) {
   useEffect(() => {
     if (endpoint && !fetched.current) {
       fetchVideos();
-      fetched.current = true;
+      // fetched.current = true;
     }
   }, [endpoint]);
 

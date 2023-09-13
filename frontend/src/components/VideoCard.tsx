@@ -138,25 +138,24 @@ const StyledCard = styled.div`
       border-radius: 100%;
     }
   }
+`;
 
-  .user-picture {
-    position: relative;
+const StyledUserPicture = styled.div<{ $image?: string }>`
+  position: relative;
 
-    div {
-      position: absolute;
-      bottom: 0;
-      right: 1rem;
-      transform: translateY(50%);
-      width: 52px;
-      height: 52px;
-      border-radius: 50rem;
-      padding: 2px;
-      border: 2px solid ${({ theme }) => theme.colors.quaternary};
-      background-color: ${({ theme }) => theme.colors.background};
-      img {
-        border-radius: 100%;
-      }
-    }
+  div {
+    position: absolute;
+    bottom: 0;
+    right: 1rem;
+    transform: translateY(50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50rem;
+    padding: 2px;
+    border: 2px solid ${({ theme }) => theme.colors.quaternary};
+    background-image: url(${({ $image }) => $image});
+    background-size: cover;
+    background-color: ${({ theme }) => theme.colors.background};
   }
 `;
 
@@ -225,7 +224,9 @@ export default function VideoCard(props: CardProps) {
       <div>
         {props.length && <div className="duration">{props.length}</div>}
         <img
-          src={`${import.meta.env.VITE_BACKEND}/videos/${props.coverImage}`}
+          src={`${import.meta.env.VITE_DATAS_ENDPOINT}/videos/${
+            props.coverImage
+          }`}
           alt=""
         />
         <button className="play" onClick={playBtnOnClick}>
@@ -233,11 +234,9 @@ export default function VideoCard(props: CardProps) {
         </button>
       </div>
       {user && (
-        <div className="user-picture">
-          <div>
-            <img src={user.picture} alt="user" />
-          </div>
-        </div>
+        <StyledUserPicture $image={user.picture}>
+          <div></div>
+        </StyledUserPicture>
       )}
       <div>
         {user && (

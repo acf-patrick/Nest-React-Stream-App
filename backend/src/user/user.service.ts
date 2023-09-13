@@ -23,7 +23,7 @@ export class UserService {
       },
     });
     if (user?.avatar && data.avatar) {
-      const file = join(process.cwd(), `./public/images/${user.avatar}`);
+      const file = join(__dirname, '../..', `./public/datas/images/${user.avatar}`);
       fs.unlink(file, (err) => {
         if (err) {
           console.error(err);

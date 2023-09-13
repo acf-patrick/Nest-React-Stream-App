@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
     AuthModule,
     MulterModule.register({
       storage: diskStorage({
-        destination: './public/images',
+        destination: './public/datas/images',
         filename: (_, file, callback) => {
           const ext = file.mimetype.split('/')[1];
           callback(null, `${uuidv4()}.${ext}`);
