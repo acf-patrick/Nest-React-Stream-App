@@ -5,7 +5,7 @@
     "build": "yarn build_client && yarn build_server && mkdir -p \"backend/dist/public\" && cp -r frontend/dist/* backend/dist/public",
     "postbuild": "cd backend && npx prisma migrate deploy",
     "dev": "concurrently \"cd backend && yarn start:dev\" \"cd frontend && yarn dev --host\"",
-    "start": "node backend/dist/src/main",
+    "start": "node src/main",
     "postinstall": "cd frontend && yarn && cd ../backend && yarn"
   },
   "devDependencies": {
