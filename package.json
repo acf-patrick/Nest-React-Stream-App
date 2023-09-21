@@ -2,7 +2,7 @@
   "scripts": {
     "build_client": "cd frontend && yarn build && cd ..",
     "build_server": "cd backend && yarn build && cd ..",
-    "build": "yarn build_client && yarn build_server && mkdir -p \"backend/dist/public\" && cp -r frontend/dist/* backend/dist/public && echo '{ \"scripts\":{ \"start\":\"node ./src/main.js\" } }' >> backend/dist/package.json",
+    "build": "yarn build_client && yarn build_server && mkdir -p \"backend/dist/public\" && cp -r frontend/dist/* backend/dist/public && echo '{ \"scripts\":{ \"start\":\"node src/main\" } }' >> backend/dist/package.json",
     "postbuild": "cd backend && npx prisma migrate deploy",
     "dev": "concurrently \"cd backend && yarn start:dev\" \"cd frontend && yarn dev --host\"",
     "start": "node src/main",
