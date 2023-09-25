@@ -138,10 +138,8 @@ export class VideoService {
         const videoPath = join(
           __dirname,
           '../..',
-          `./public/datas/videos/${video}`,
+          `public/datas/videos/${video}`,
         );
-        
-        console.error(videoPath);
         
         const videoInfo = statSync(videoPath);
         const CHUNK_SIZE = 1e6; // 1Mb
