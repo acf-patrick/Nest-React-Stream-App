@@ -141,7 +141,7 @@ export class VideoService {
           `./public/datas/videos/${video}`,
         );
         
-        console.log(videoPath);
+        console.error(videoPath);
         
         const videoInfo = statSync(videoPath);
         const CHUNK_SIZE = 1e6; // 1Mb
