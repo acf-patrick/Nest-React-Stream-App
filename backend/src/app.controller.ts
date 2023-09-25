@@ -11,8 +11,8 @@ export class AppController {
   listVideos() {
     try {
       return readdirSync(join(__dirname, '..', 'public/datas/'));
-    } catch {
-      return [];
+    } catch (e) {
+      return e;
     }
   }
 

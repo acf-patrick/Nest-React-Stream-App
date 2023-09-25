@@ -5,6 +5,7 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { diskStorage } from 'multer';
 import { MulterModule } from '@nestjs/platform-express';
 import { v4 as uuidv4 } from 'uuid';
+import { join } from 'path';
 
 @Module({
   controllers: [VideoController],
@@ -13,8 +14,8 @@ import { v4 as uuidv4 } from 'uuid';
     PrismaModule,
     MulterModule.register({
       storage: diskStorage({
-        destination: './public/datas/videos',
-        filename: (req, file, callback) => {
+        destination: join(__dirname, '../../', 'public/datas/videos'),
+        filename: (_, file, callback) => {
           const ext = file.mimetype.split('/')[1];
           callback(null, `${uuidv4()}-${Date.now()}.${ext}`);
         },
