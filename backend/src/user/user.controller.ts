@@ -51,9 +51,15 @@ export class UserController {
     const user = await this.userService.getOne(id);
     if (user) {
       if (user.avatar) {
-        user.avatar = `http://localhost:${this.configService.get<string>(
-          'PORT',
-        )}/datas/images/${user.avatar}`;
+        if (process.env.NODE_ENV === 'production') {
+          user.avatar = `${this.configService.get<string>(
+            'DOMAIN',
+          )}/datas/images/${user.avatar}`;
+        } else {
+          user.avatar = `http://localhost:${this.configService.get<string>(
+            'PORT',
+          )}/datas/images/${user.avatar}`;
+        }
       }
       return user;
     }
