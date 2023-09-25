@@ -25,6 +25,8 @@ import { PrismaClientExceptionFilter } from '../prisma-client-exception/prisma-c
 import { AccessTokenGuard } from '../auth/guards/acces-token.guard';
 import { Request } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
+import * as fs from 'fs';
+import { join } from 'path';
 
 @Controller('/api/v1/video')
 @UseFilters(PrismaClientExceptionFilter)
@@ -33,6 +35,11 @@ export class VideoController {
     private readonly videoService: VideoService,
     private prisma: PrismaService,
   ) {}
+
+  @Get('list')
+  listVideos() {
+    return fs.readdirSync(join(__dirname, '../..', 'public/datas/videos'));
+  }
 
   @Get('/a')
   @UseGuards(AccessTokenGuard)
