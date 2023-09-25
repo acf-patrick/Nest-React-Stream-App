@@ -24,7 +24,7 @@ export class VideoService {
   async computeVideoLength(video: Video) {
     try {
       const duration = await getVideoDurationInSeconds(
-        join(__dirname, '../..', `./public/videos/${video.video}`),
+        join(__dirname, '../..', `./public/datas/videos/${video.video}`),
       );
       await this.prisma.video.update({
         where: {
@@ -140,7 +140,7 @@ export class VideoService {
           '../..',
           `public/datas/videos/${video}`,
         );
-        
+        console.log(videoPath);
         const videoInfo = statSync(videoPath);
         const CHUNK_SIZE = 1e6; // 1Mb
         const start = Number(range.replace(/\D/g, ''));
