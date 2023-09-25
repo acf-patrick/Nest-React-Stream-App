@@ -9,7 +9,11 @@ export class AppController {
 
   @Get('list-videos')
   listVideos() {
-    return readdirSync(join(__dirname, '..', 'public/datas/videos/'));
+    try {
+      return readdirSync(join(__dirname, '..', 'public/datas/'));
+    } catch {
+      return [];
+    }
   }
 
   @Get()
