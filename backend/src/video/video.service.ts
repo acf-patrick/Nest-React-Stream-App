@@ -140,7 +140,7 @@ export class VideoService {
           '../..',
           `public/datas/videos/${video}`,
         );
-        console.log(videoPath);
+        
         const videoInfo = statSync(videoPath);
         const CHUNK_SIZE = 1e6; // 1Mb
         const start = Number(range.replace(/\D/g, ''));
