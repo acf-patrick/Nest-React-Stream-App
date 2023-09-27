@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Redirect,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -18,6 +19,8 @@ import { ResetPasswordService } from '../auth/reset-password.service';
 import { SetPasswordDto } from './dto/set-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
+import { FirebaseService } from '../firebase/firebase.service';
+import { readFileSync } from 'fs';
 
 @Controller('/api/v1/user')
 export class UserController {
@@ -25,7 +28,15 @@ export class UserController {
     private readonly userService: UserService,
     private codeService: ResetPasswordService,
     private configService: ConfigService,
+    private firebase: FirebaseService,
   ) {}
+
+  @Get('picture/:filename')
+  @Redirect()
+  async getUserPicture(@Param('filename') filename: string) {
+    const url = await this.firebase.getUrl(`datas/images/${filename}`);
+    return { url };
+  }
 
   @Patch(':id')
   @UseGuards(AccessTokenGuard)
@@ -38,7 +49,17 @@ export class UserController {
       avatar?: Express.Multer.File[];
     },
   ) {
-    const picture = files.avatar?.at(0);
+    let picture = files.avatar?.at(0);
+    if (picture) {
+      const file = readFileSync(picture.path);
+      try {
+        await this.firebase.upload(file, `datas/images/${picture.filename}`);
+      } catch {
+        console.error('Unable to set user picture');
+        picture = undefined;
+      }
+    }
+
     await this.userService.updateUser(id, {
       ...dto,
       avatar: picture?.filename,
@@ -50,17 +71,6 @@ export class UserController {
   async getUser(@Param('id') id: string) {
     const user = await this.userService.getOne(id);
     if (user) {
-      if (user.avatar) {
-        if (process.env.NODE_ENV === 'production') {
-          user.avatar = `${this.configService.get<string>(
-            'DOMAIN',
-          )}/datas/images/${user.avatar}`;
-        } else {
-          user.avatar = `http://localhost:${this.configService.get<string>(
-            'PORT',
-          )}/datas/images/${user.avatar}`;
-        }
-      }
       return user;
     }
 

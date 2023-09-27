@@ -14,7 +14,7 @@ import { FirebaseModule } from './firebase/firebase.module';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
-      exclude: [join(__dirname, '..', 'public/datas/videos')],
+      exclude: [join(__dirname, '..', 'public/datas/')],
     }),
     ConfigModule.forRoot({
       isGlobal: true,

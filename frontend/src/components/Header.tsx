@@ -197,11 +197,9 @@ function Header() {
           setUserName(name);
 
           if (user.avatar) {
-            fetch(user.avatar).then((res) => {
-              if (res.ok) {
-                setUserPicture(user.avatar);
-              }
-            });
+            setUserPicture(
+              `${import.meta.env.VITE_API_ENDPOINT}/user/picture/${user.avatar}`
+            );
           }
         })
         .catch((err) => {
@@ -228,11 +226,7 @@ function Header() {
           <label htmlFor="search-input">
             <FiSearch />
           </label>
-          <input
-            type="text"
-            id="search-input"
-            placeholder="Search video..."
-          />
+          <input type="text" id="search-input" placeholder="Search video..." />
         </div>
       </div>
       <div className="right">

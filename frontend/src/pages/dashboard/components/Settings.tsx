@@ -295,7 +295,9 @@ export default function Settings() {
               image
                 ? image
                 : user?.avatar
-                ? user.avatar
+                ? `${import.meta.env.VITE_API_ENDPOINT}/user/picture/${
+                    user.avatar
+                  }`
                 : "/images/profile-pic.png"
             }
           >

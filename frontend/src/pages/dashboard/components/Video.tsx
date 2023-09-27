@@ -184,7 +184,9 @@ export default function Video() {
         const { fullname, avatar } = res.data;
         setUser({
           name: fullname,
-          avatar: avatar ? avatar : "",
+          avatar: avatar
+            ? `${import.meta.env.VITE_API_ENDPOINT}/user/picture/${avatar}`
+            : "",
         });
       })
       .catch((err) => console.error(err));
@@ -253,7 +255,7 @@ export default function Video() {
           </div>
           <p>
             {moreVideos.length - 1} other video
-            {moreVideos.length > 1 ? "s" : ""} found ✨
+            {moreVideos.length > 2 ? "s" : ""} found ✨
           </p>
         </div>
       )}

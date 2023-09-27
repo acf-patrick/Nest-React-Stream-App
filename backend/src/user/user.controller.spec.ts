@@ -4,13 +4,16 @@ import { UserService } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { ResetPasswordService } from '../auth/reset-password.service';
+import { FirebaseService } from '../firebase/firebase.service';
+import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
 describe('UserController', () => {
+  let prisma: PrismaService;
   let controller: UserController;
   let userService: UserService;
-  let prisma: PrismaService;
   let configService: ConfigService;
   let codeService: ResetPasswordService;
+  let firebase: DeepMockProxy<FirebaseService>;
 
   const users = [
     {
@@ -50,8 +53,16 @@ describe('UserController', () => {
       getAssociatedEmail: jest.fn().mockReturnValue(users[0].email),
     } as unknown as ResetPasswordService;
 
+    firebase = mockDeep<FirebaseService>();
+    const firebaseService = firebase as unknown as FirebaseService;
+
     userService = new UserService(prisma);
-    controller = new UserController(userService, codeService, configService);
+    controller = new UserController(
+      userService,
+      codeService,
+      configService,
+      firebaseService,
+    );
   });
 
   it('should be defined', () => {

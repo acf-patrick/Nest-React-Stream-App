@@ -180,7 +180,11 @@ export default function VideoCard(props: CardProps) {
                 .map((name, i) => (i > 0 ? `${name[0].toUpperCase()}.` : name))
                 .join(" ")
             : name,
-        picture: res.data.avatar ? res.data.avatar : "/images/profile-pic.png",
+        picture: res.data.avatar
+          ? `${import.meta.env.VITE_API_ENDPOINT}/user/picture/${
+              res.data.avatar
+            }`
+          : "/images/profile-pic.png",
       });
     };
 

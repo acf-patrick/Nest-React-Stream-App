@@ -6,6 +6,7 @@ import { AuthModule } from '../auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
+import { FirebaseModule } from '../firebase/firebase.module';
 
 @Module({
   controllers: [UserController],
@@ -13,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
   imports: [
     PrismaModule,
     AuthModule,
+    FirebaseModule,
     MulterModule.register({
       storage: diskStorage({
         destination: './public/datas/images',
