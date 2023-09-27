@@ -60,7 +60,7 @@ describe('UserController', () => {
     controller = new UserController(
       userService,
       codeService,
-      configService,
+      // configService,
       firebaseService,
     );
   });

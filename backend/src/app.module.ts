@@ -13,8 +13,7 @@ import { FirebaseModule } from './firebase/firebase.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-      exclude: [join(__dirname, '..', 'public/datas/')],
+      rootPath: join(__dirname, '..', 'client'),
     }),
     ConfigModule.forRoot({
       isGlobal: true,

@@ -27,7 +27,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private codeService: ResetPasswordService,
-    private configService: ConfigService,
+    // private configService: ConfigService,
     private firebase: FirebaseService,
   ) {}
 
