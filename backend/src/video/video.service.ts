@@ -14,18 +14,29 @@ import { createReadStream, statSync } from 'fs';
 import { join } from 'path';
 import * as fs from 'fs';
 import getVideoDurationInSeconds from 'get-video-duration';
-import { ConfigService } from '@nestjs/config';
 import { Video } from '@prisma/client';
+import { FirebaseService } from '../firebase/firebase.service';
+import { access } from 'fs/promises';
 
 @Injectable()
 export class VideoService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private firebase: FirebaseService,
+  ) {}
 
   async computeVideoLength(video: Video) {
     try {
-      const duration = await getVideoDurationInSeconds(
-        join(__dirname, '../..', `./public/datas/videos/${video.video}`),
+      const videoPath = join(
+        __dirname,
+        '../..',
+        `./public/datas/videos/${video.video}`,
       );
+      if (!fs.existsSync(videoPath)) {
+        await this.firebase.download(`datas/videos/${video.video}`, videoPath);
+      }
+
+      const duration = await getVideoDurationInSeconds(videoPath);
       await this.prisma.video.update({
         where: {
           id: video.id,
@@ -140,9 +151,14 @@ export class VideoService {
           '../..',
           `public/datas/videos/${video}`,
         );
-        
+
+        if (!fs.existsSync(videoPath)) {
+          // download file form firebase storage
+          await this.firebase.download(`datas/videos/${video}`, videoPath);
+        }
+
         const videoInfo = statSync(videoPath);
-        const CHUNK_SIZE = 1e6; // 1Mb
+        const CHUNK_SIZE = 1024 * 1024; // 1Mb
         const start = Number(range.replace(/\D/g, ''));
         const end = Math.min(start + CHUNK_SIZE, videoInfo.size - 1);
         const videoLength = end - start + 1;
@@ -210,17 +226,17 @@ export class VideoService {
       );
     }
 
-    [video.video, video.coverImage].forEach((path) => {
+    for (let path of [video.video, video.coverImage]) {
+      await this.firebase.delete(`datas/videos/${path}`);
       fs.unlink(
         join(__dirname, '../..', `./public/datas/videos/${path}`),
         (err) => {
           if (err) {
             console.error(err);
-            throw new InternalServerErrorException(err);
           }
         },
       );
-    });
+    }
 
     await this.prisma.video.delete({ where: { id } });
   }

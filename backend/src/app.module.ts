@@ -8,6 +8,7 @@ import { VideoModule } from './video/video.module';
 import { UserModule } from './user/user.module';
 import { MailModule } from './mail/mail.module';
 import { ConfigModule } from '@nestjs/config';
+import { FirebaseModule } from './firebase/firebase.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ConfigModule } from '@nestjs/config';
     VideoModule,
     UserModule,
     MailModule,
+    FirebaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],

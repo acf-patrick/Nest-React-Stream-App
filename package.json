@@ -9,6 +9,7 @@
     "postinstall": "cd frontend && yarn && cd ../backend && yarn"
   },
   "devDependencies": {
+    "@types/firebase": "^3.2.1",
     "concurrently": "^8.2.0"
   }
 }

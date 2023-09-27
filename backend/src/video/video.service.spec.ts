@@ -5,16 +5,21 @@ import { PrismaService } from '../prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as fs from 'fs';
+import { FirebaseService } from '../firebase/firebase.service';
 
 describe('VideoService', () => {
   let service: VideoService;
   let prisma: DeepMockProxy<PrismaClient>;
+  let firebase: DeepMockProxy<FirebaseService>;
 
   beforeAll(() => {
     prisma = mockDeep<PrismaClient>();
-    const prismaService = prisma as unknown as PrismaService;
+    firebase = mockDeep<FirebaseService>();
 
-    service = new VideoService(prismaService);
+    const prismaService = prisma as unknown as PrismaService;
+    const firebaseService = firebase as unknown as FirebaseService;
+
+    service = new VideoService(prismaService, firebaseService);
     jest
       .spyOn(service, 'computeVideoLength')
       .mockImplementation(async (video) => null);

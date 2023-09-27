@@ -224,7 +224,7 @@ export default function VideoCard(props: CardProps) {
       <div>
         {props.length && <div className="duration">{props.length}</div>}
         <img
-          src={`${import.meta.env.VITE_DATAS_ENDPOINT}/videos/${
+          src={`${import.meta.env.VITE_API_ENDPOINT}/video/cover/${
             props.coverImage
           }`}
           alt=""

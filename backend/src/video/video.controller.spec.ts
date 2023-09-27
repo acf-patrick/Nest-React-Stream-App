@@ -5,17 +5,22 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { Video } from '@prisma/client';
 import { PostVideoDto } from './dto/post-video.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { FirebaseService } from '../firebase/firebase.service';
 
 describe('VideoController', () => {
   let controller: VideoController;
+  let firebase: DeepMockProxy<FirebaseService>;
   let videoService: DeepMockProxy<VideoService>;
 
   beforeAll(async () => {
     videoService = mockDeep<VideoService>();
+    firebase = mockDeep<FirebaseService>();
+
     videoService.computeVideoLength.mockImplementation(async (video) => null);
     controller = new VideoController(
       videoService as unknown as VideoService,
       {} as unknown as PrismaService,
+      firebase as unknown as FirebaseService,
     );
   });
 

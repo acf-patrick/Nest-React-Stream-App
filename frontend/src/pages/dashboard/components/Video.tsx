@@ -239,9 +239,9 @@ export default function Video() {
                   <li key={i}>
                     <VideoListItem
                       id={video.id}
-                      cover={`${import.meta.env.VITE_DATAS_ENDPOINT}/videos/${
-                        video.coverImage
-                      }`}
+                      cover={`${
+                        import.meta.env.VITE_API_ENDPOINT
+                      }/video/cover/${video.coverImage}`}
                       title={video.title}
                       uploader={user ? user.name : ""}
                       uploadDate={transformDate(video.uploadDate)}
@@ -251,7 +251,10 @@ export default function Video() {
               })}
             </ul>
           </div>
-          <p>{moreVideos.length - 1} other videos found ✨</p>
+          <p>
+            {moreVideos.length - 1} other video
+            {moreVideos.length > 1 ? "s" : ""} found ✨
+          </p>
         </div>
       )}
     </StyledVideoContainer>

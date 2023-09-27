@@ -6,12 +6,14 @@ import { diskStorage } from 'multer';
 import { MulterModule } from '@nestjs/platform-express';
 import { v4 as uuidv4 } from 'uuid';
 import { join } from 'path';
+import { FirebaseModule } from '../firebase/firebase.module';
 
 @Module({
   controllers: [VideoController],
   providers: [VideoService],
   imports: [
     PrismaModule,
+    FirebaseModule,
     MulterModule.register({
       storage: diskStorage({
         destination: join(__dirname, '../../', 'public/datas/videos'),

@@ -17,6 +17,7 @@ import {
   BadRequestException,
   UnauthorizedException,
   NotFoundException,
+  Redirect,
 } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -25,13 +26,25 @@ import { PrismaClientExceptionFilter } from '../prisma-client-exception/prisma-c
 import { AccessTokenGuard } from '../auth/guards/acces-token.guard';
 import { Request } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
+import { FirebaseService } from '../firebase/firebase.service';
+import { readFileSync } from 'fs';
+
 @Controller('/api/v1/video')
 @UseFilters(PrismaClientExceptionFilter)
 export class VideoController {
   constructor(
     private readonly videoService: VideoService,
     private prisma: PrismaService,
+    private firebase: FirebaseService,
   ) {}
+
+  @Get('/cover/:filename')
+  @Redirect()
+  async getCoverFile(@Param('filename') filename: string) {
+    return {
+      url: await this.firebase.getUrl(`datas/videos/${filename}`),
+    };
+  }
 
   @Get('/a')
   @UseGuards(AccessTokenGuard)
@@ -156,6 +169,23 @@ export class VideoController {
       coverImage: files.cover[0].filename,
       userEmail: req.user['email'],
     };
+
+    {
+      // Upload files
+
+      const video = readFileSync(files.video[0].path);
+      await this.firebase.upload(
+        video,
+        `datas/videos/${files.video[0].filename}`,
+      );
+
+      const cover = readFileSync(files.cover[0].path);
+      await this.firebase.upload(
+        cover,
+        `datas/videos/${files.cover[0].filename}`,
+      );
+    }
+
     return this.videoService.createVideo(payload);
   }
 }
