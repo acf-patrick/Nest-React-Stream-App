@@ -7,7 +7,6 @@ import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Logo } from "../../../components";
 import { rgba } from "polished";
-import api from "../../../api";
 import { Link } from "react-router-dom";
 
 type Link = {
