@@ -12,6 +12,8 @@ import {
   Req,
   Ip,
   UseGuards,
+  Param,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupUserDto } from './dto/signup-user.dto';
@@ -99,16 +101,6 @@ export class AuthController {
       ...user,
       refreshToken,
     };
-  }
-
-  @UseGuards(AccessTokenGuard)
-  @Get('/logout')
-  async logout(@Req() req: Request, @Ip() ipAddress: string) {
-    const user = req.user!;
-    const email: string = user['email'];
-    const userAgent = req.headers['user-agent']!;
-    await this.authService.invalidateRefreshToken(email, ipAddress, userAgent);
-    return 'logged out';
   }
 
   @UseGuards(RefreshTokenGuard)

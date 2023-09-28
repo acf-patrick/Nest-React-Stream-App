@@ -130,13 +130,8 @@ function Sidebar() {
           label: "Log out",
           icon: <IoExitOutline />,
           action() {
-            api
-              .get("/auth/logout")
-              .then(() => {
-                localStorage.clear();
-                navigate("/login");
-              })
-              .catch((err) => console.error(err));
+            localStorage.clear();
+            navigate("/login");
           },
         },
       ],
@@ -175,7 +170,8 @@ function Sidebar() {
                     onClick={(e) => {
                       e.preventDefault();
                       link.action!();
-                    }}>
+                    }}
+                  >
                     {link.label}
                   </a>
                 ) : (

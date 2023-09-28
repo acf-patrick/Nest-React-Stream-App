@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -33,30 +37,30 @@ export class AuthService {
   }
 
   async refreshTokens(refreshToken: string) {
-    const record = await this.prisma.refreshToken.findUnique({
-      where: { token: refreshToken },
-    });
-    if (!record) {
+    try {
+      const record = this.jwt.verify<{
+        email: string;
+        ipAddress: string;
+        userAgent: string;
+      }>(refreshToken, {
+        secret: this.configService.get<string>('REFRESH_SECRET'),
+      });
+
+      refreshToken = await this.generateRefreshToken(
+        record.email,
+        record.ipAddress,
+        record.userAgent,
+      );
+
+      const accessToken = await this.generateAccessToken(record.email);
+      return {
+        refreshToken,
+        accessToken,
+      };
+    } catch (e) {
+      console.error(e);
       throw new BadRequestException('Invalid refresh token');
     }
-
-    await this.prisma.refreshToken.deleteMany({
-      where: {
-        token: refreshToken,
-      },
-    });
-
-    refreshToken = await this.generateRefreshToken(
-      record.email,
-      record.ipAddress,
-      record.userAgent,
-    );
-
-    const accessToken = await this.generateAccessToken(record.email);
-    return {
-      refreshToken,
-      accessToken,
-    };
   }
 
   async generateAccessToken(email: string) {
@@ -65,31 +69,10 @@ export class AuthService {
         email,
       },
       {
-        expiresIn: '1h',
+        expiresIn: '15m',
       },
     );
     return token;
-  }
-
-  async invalidateRefreshToken(
-    email: string,
-    ipAddress: string,
-    userAgent: string,
-  ) {
-    try {
-      const res = await this.prisma.refreshToken.delete({
-        where: {
-          ipAddress_userAgent_email: {
-            ipAddress,
-            userAgent,
-            email,
-          },
-        },
-      });
-      return res;
-    } catch {
-      return null;
-    }
   }
 
   /**
@@ -112,29 +95,7 @@ export class AuthService {
         secret: this.configService.get<string>('REFRESH_SECRET'),
       },
     );
-
-    let record = await this.prisma.refreshToken.findUnique({
-      where: {
-        ipAddress_userAgent_email: {
-          email,
-          userAgent,
-          ipAddress,
-        },
-      },
-    });
-    if (record) {
-      return record.token;
-    }
-
-    record = await this.prisma.refreshToken.create({
-      data: {
-        token: refreshToken,
-        ipAddress,
-        userAgent,
-        email,
-      },
-    });
-
+    
     return refreshToken;
   }
 
