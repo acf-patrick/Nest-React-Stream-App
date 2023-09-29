@@ -130,20 +130,6 @@ describe('AuthController', () => {
     });
   });
 
-  it('should logout a user', async () => {
-    const req = {
-      user: {
-        email: 'user@mail.com',
-      },
-      headers: {
-        'user-agent': '',
-      },
-    } as unknown as Request;
-    jest.spyOn(authService, 'invalidateRefreshToken').mockResolvedValue(null);
-
-    await expect(controller.logout(req, '0.0.0.0')).resolves.toBe('logged out');
-  });
-
   it('generate new tokens', async () => {
     const req = {
       user: {

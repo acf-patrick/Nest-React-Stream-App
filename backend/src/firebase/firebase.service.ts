@@ -4,9 +4,8 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { initializeApp } from 'firebase/app';
+import { FirebaseApp, initializeApp } from 'firebase/app';
 import {
-  FirebaseStorage,
   deleteObject,
   getDownloadURL,
   getStorage,
@@ -18,10 +17,10 @@ import { promisify } from 'util';
 
 @Injectable()
 export class FirebaseService {
-  private storage: FirebaseStorage;
+  private app: FirebaseApp;
 
   constructor(configService: ConfigService) {
-    const app = initializeApp({
+    this.app = initializeApp({
       apiKey: configService.get<string>('API_KEY'),
       authDomain: configService.get<string>('AUTH_DOMAIN'),
       projectId: configService.get<string>('PROJECT_ID'),
@@ -30,27 +29,33 @@ export class FirebaseService {
       appId: configService.get<string>('APP_ID'),
       measurementId: configService.get<string>('MEASUREMENT_ID'),
     });
-    this.storage = getStorage(app);
   }
 
-  async upload(file: Buffer, dest: string) {
-    const destRef = ref(this.storage, dest);
+  getStorage() {
+    return getStorage(this.app);
+  }
+
+  upload(file: Buffer, dest: string) {
+    const storage = this.getStorage();
+    const destRef = ref(storage, dest);
     try {
-      await uploadBytes(destRef, file);
+      return uploadBytes(destRef, file);
     } catch (e) {
       console.error(e);
       throw new ServiceUnavailableException('Failed to upload video');
     }
   }
 
-  async delete(file: string) {
-    const fileRef = ref(this.storage, file);
-    await deleteObject(fileRef);
+  delete(file: string) {
+    const storage = this.getStorage();
+    const fileRef = ref(storage, file);
+    return deleteObject(fileRef);
   }
 
   async download(file: string, dest: string) {
     try {
-      const fileRef = ref(this.storage, file);
+      const storage = this.getStorage();
+      const fileRef = ref(storage, file);
       const url = await getDownloadURL(fileRef);
       const res = await fetch(url);
       const buf = await res.arrayBuffer();
@@ -63,11 +68,11 @@ export class FirebaseService {
     }
   }
 
-  async getUrl(file: string) {
-    const fileRef = ref(this.storage, file);
+  getUrl(file: string) {
+    const storage = this.getStorage();
+    const fileRef = ref(storage, file);
     try {
-      const url = await getDownloadURL(fileRef);
-      return url;
+      return getDownloadURL(fileRef);
     } catch (e) {
       console.error(e);
       throw new NotFoundException(`${file} not found`);

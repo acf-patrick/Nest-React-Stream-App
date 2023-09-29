@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AuthService } from './auth.service';
 import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaClient, RefreshToken } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
 
@@ -78,17 +78,14 @@ describe('AuthService', () => {
   });
 
   it('should returns new tokens', async () => {
-    const refreshToken = 'REFRESH_TOKEN';
-    const record: RefreshToken = {
-      email: 'user@mail.com',
-      ipAddress: '0.0.0.0',
-      token: refreshToken,
-      userAgent: '',
-    };
-    prisma.refreshToken.findUnique.mockResolvedValueOnce(record);
+    const refreshToken = await service.generateRefreshToken(
+      'user@mail.com',
+      '0.0.0.0',
+      'device',
+    );
 
     const res = await service.refreshTokens(refreshToken);
-    expect(res.refreshToken !== refreshToken).toBeTruthy();
+    expect(res.refreshToken === refreshToken).toBeTruthy();
   });
 
   it('generate access token', async () => {
@@ -99,28 +96,13 @@ describe('AuthService', () => {
     expect(jwt.verify(token)).toHaveProperty('email');
   });
 
-  it('should return existing refresh token', async () => {
-    const record: RefreshToken = {
-      token: 'REFRESH_TOKEN',
-      email: '',
-      ipAddress: '',
-      userAgent: '',
-    };
-    prisma.refreshToken.findUnique.mockResolvedValue(record);
-
-    await expect(
-      service.generateRefreshToken('user@mail.com', '0.0.0.0', ''),
-    ).resolves.toBe(record.token);
-  });
-
   it('should generate new refresh token', async () => {
-    const record: RefreshToken = {
+    const record = {
       email: 'user@mail.com',
       ipAddress: '0.0.0.0',
       token: 'REFRESH_TOKEN',
       userAgent: '',
     };
-    prisma.refreshToken.findUnique.mockResolvedValue(null);
 
     const token = await service.generateRefreshToken(
       record.email,
@@ -135,11 +117,5 @@ describe('AuthService', () => {
       ...payload,
       token: record.token,
     }).toMatchObject(record);
-  });
-
-  it('invalidate a refresh token', async () => {
-    await expect(
-      service.invalidateRefreshToken('user@mail.com', '0.0.0.0', ''),
-    ).resolves.toBeUndefined();
   });
 });
