@@ -15,6 +15,6 @@ Basically this application allows user to post and stream videos.
 
 ### Key features
 
-- [x] User authentication
-- [x] Mailing for forgotten password cases
-- [x] By parts media streaming using Multer
+- [x] User authentication 🧍
+- [x] Mailing for forgotten password cases 🔐
+- [x] Media storage with Firebase 🔥
