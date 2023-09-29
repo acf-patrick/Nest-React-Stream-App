@@ -13,11 +13,13 @@ Basically this application allows user to post and stream videos.
 
 ![screenshot](/screenshot.png)
 
-### Key features
-
+### Features ⚡
 - [x] User authentication 🧍
 - [x] Mailing for forgotten password cases 🔐
 - [x] Media storage with Firebase 🔥
+- [ ] Responsiveness
+- [ ] Search algorithm
+- [ ] Navigation buttons (⬅️ | ➡️)
 
 ## Testing 🧪
 
