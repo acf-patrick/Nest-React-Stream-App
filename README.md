@@ -18,3 +18,8 @@ Basically this application allows user to post and stream videos.
 - [x] User authentication 🧍
 - [x] Mailing for forgotten password cases 🔐
 - [x] Media storage with Firebase 🔥
+
+## Testing 🧪
+
+Make sure to set up [Firebase emulator](https://firebase.google.com/docs/rules/emulator-setup) 🔥 (That's pretty much all you have to do as preparation 🤷🏽)
+**e2e** tests are not implemented yet 🙈
