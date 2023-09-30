@@ -3,6 +3,15 @@ import { useNavigate, Link } from "react-router-dom";
 import { Logo } from "../../components";
 import api from "../../api";
 import { useState } from "react";
+import { VscLoading } from "react-icons/vsc";
+
+const spin = keyframes`
+  from {
+    transform: rotate(0);
+  } to {
+    transform: rotate(360deg);
+  }
+`;
 
 const errorShowing = keyframes`
   from {
@@ -74,9 +83,24 @@ const Card = styled.div`
     font-size: 1rem;
     transition: transform 350ms, box-shadow 350ms;
 
-    &:hover {
+    &:not([disabled]):hover {
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
       transform: translateY(-5px);
+    }
+
+    &[type="submit"] {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+
+      svg {
+        font-size: 1.25rem;
+        animation: ${spin} 1s ease-out infinite;
+      }
+    }
+
+    &[disabled] {
+      background: grey;
     }
   }
 
@@ -114,12 +138,14 @@ const Card = styled.div`
 
 function Login() {
   const [error, setError] = useState("");
+  const [checking, setChecking] = useState(false);
   const navigate = useNavigate();
 
   const formOnSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
+    setChecking(true);
     api
       .post("/auth/signin", {
         email: formData.get("email"),
@@ -136,6 +162,9 @@ function Login() {
         console.error(err);
         const message = err.response.data.message;
         setError(message);
+      })
+      .finally(() => {
+        setChecking(false);
       });
   };
 
@@ -165,7 +194,10 @@ function Login() {
           </div>
           {error.length > 0 && <p className="error">{error}</p>}
           <div className="submit-btn">
-            <button type="submit">login</button>
+            <button type="submit" disabled={checking}>
+              <span>login</span>
+              {checking && <VscLoading />}
+            </button>
           </div>
         </form>
       </Card>

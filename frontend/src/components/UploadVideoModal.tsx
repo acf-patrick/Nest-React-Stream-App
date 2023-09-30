@@ -313,6 +313,8 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
     total: number;
   } | null>(null);
 
+  const [uploading, setUploading] = useState(false)
+
   const container = document.querySelector("#modal-portal")!;
 
   const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -346,6 +348,7 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
       button.disabled = true;
     }
 
+    setUploading(true)
     api
       .post("/video", formData, {
         headers: {
@@ -368,7 +371,8 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
       .then(() => {
         onClose();
       })
-      .catch((e) => console.error(e));
+      .catch((e) => console.error(e))
+      .finally(() => setUploading(false));
   };
 
   const inputContainerOnClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -381,7 +385,11 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
 
   return createPortal(
     <>
-      <StyledBackground onClick={onClose} />
+      <StyledBackground onClick={() => {
+        if (!uploading) {
+          onClose()
+        }
+      }} />
       <StyledModal>
         <h1>
           <span>Upload your Video</span>
