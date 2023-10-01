@@ -313,7 +313,7 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
     total: number;
   } | null>(null);
 
-  const [uploading, setUploading] = useState(false)
+  const [uploading, setUploading] = useState(false);
 
   const container = document.querySelector("#modal-portal")!;
 
@@ -348,7 +348,7 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
       button.disabled = true;
     }
 
-    setUploading(true)
+    setUploading(true);
     api
       .post("/video", formData, {
         headers: {
@@ -385,11 +385,13 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
 
   return createPortal(
     <>
-      <StyledBackground onClick={() => {
-        if (!uploading) {
-          onClose()
-        }
-      }} />
+      <StyledBackground
+        onClick={() => {
+          if (!uploading) {
+            onClose();
+          }
+        }}
+      />
       <StyledModal>
         <h1>
           <span>Upload your Video</span>
@@ -416,8 +418,7 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
             style={{
               borderStyle: coverImage ? "solid" : "dashed",
             }}
-            onClick={inputContainerOnClick}
-          >
+            onClick={inputContainerOnClick}>
             {coverImage ? (
               <div className="cover-image">
                 <div>
@@ -455,8 +456,7 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
             style={{
               borderStyle: videoFile ? "solid" : "dashed",
             }}
-            onClick={inputContainerOnClick}
-          >
+            onClick={inputContainerOnClick}>
             {videoFile ? (
               <div className="video">
                 <div>
@@ -469,8 +469,7 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
                     <div className="video__upload">
                       <progress
                         value={upload.progress}
-                        max={upload.total}
-                      ></progress>
+                        max={upload.total}></progress>
                       <span>
                         {Math.round((100 * upload.progress) / upload.total)} %
                       </span>
@@ -529,11 +528,14 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
               type="button"
               onClick={() => {
                 onClose();
-              }}
-            >
+              }}>
               Cancel
             </button>
-            <button>Import</button>
+            <button>
+              {upload && upload.progress === upload.total
+                ? "Finalizing 🚀"
+                : "Import"}
+            </button>
           </div>
         </form>
       </StyledModal>
