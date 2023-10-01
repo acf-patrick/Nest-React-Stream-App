@@ -16,7 +16,7 @@ import * as fs from 'fs';
 import getVideoDurationInSeconds from 'get-video-duration';
 import { Video } from '@prisma/client';
 import { FirebaseService } from '../firebase/firebase.service';
-import { access } from 'fs/promises';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class VideoService {
@@ -24,6 +24,23 @@ export class VideoService {
     private prisma: PrismaService,
     private firebase: FirebaseService,
   ) {}
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async purgeUnusedFiles() {
+    const records = await this.prisma.video.findMany({
+      select: {
+        coverImage: true,
+        video: true,
+      },
+    });
+
+    await this.firebase.deleteUnusedFiles(
+      'datas/videos',
+      records
+        .map((record) => [record.coverImage, record.video])
+        .reduce((prev, curr) => [...prev, ...curr], []),
+    );
+  }
 
   async computeVideoLength(video: Video) {
     try {

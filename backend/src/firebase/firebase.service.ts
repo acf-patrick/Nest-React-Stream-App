@@ -9,6 +9,7 @@ import {
   deleteObject,
   getDownloadURL,
   getStorage,
+  list,
   ref,
   uploadBytes,
 } from 'firebase/storage';
@@ -50,6 +51,21 @@ export class FirebaseService {
     const storage = this.getStorage();
     const fileRef = ref(storage, file);
     return deleteObject(fileRef);
+  }
+
+  async deleteUnusedFiles(folder: string, usedFiles: string[]) {
+    const storage = this.getStorage();
+    const folderRef = ref(storage, folder);
+    try {
+      const files = await list(folderRef);
+      for (let file of files.items) {
+        if (!usedFiles.includes(file.name)) {
+          await deleteObject(file);
+        }
+      }
+    } catch {
+      throw new ServiceUnavailableException('Failed to purge unused files');
+    }
   }
 
   async download(file: string, dest: string) {
