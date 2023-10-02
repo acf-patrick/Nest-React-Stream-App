@@ -42,16 +42,14 @@ const StyledNewVideoButton = styled.button`
   }
 `;
 
-const NewVideoButton = (props: { toggleModal: () => void }) => {
-  return (
-    <StyledNewVideoButton onClick={props.toggleModal}>
-      <span className="plus">
-        <PiVideo />
-      </span>
-      <span>Upload video</span>
-    </StyledNewVideoButton>
-  );
-};
+const NewVideoButton = (props: { toggleModal: () => void }) => (
+  <StyledNewVideoButton onClick={props.toggleModal}>
+    <span className="plus">
+      <PiVideo />
+    </span>
+    <span>Upload video</span>
+  </StyledNewVideoButton>
+);
 
 export default function UsersVideos() {
   const { videos, fetchVideos } = useVideos("/video");

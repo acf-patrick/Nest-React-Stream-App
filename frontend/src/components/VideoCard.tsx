@@ -6,6 +6,7 @@ import { FaPlay } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { MdModeEditOutline } from "react-icons/md";
+import DeleteVideoModal from "./DeleteVideo.modal";
 
 type CardProps = {
   id: string;
@@ -216,6 +217,7 @@ export default function VideoCard(props: CardProps) {
     picture: string;
   } | null>(null);
 
+  const [showDeleteVideoModal, setShowDeleteVideoModal] = useState(false);
   const [uploadDate, setUploadDate] = useState("");
   const navigate = useNavigate();
 
@@ -277,48 +279,56 @@ export default function VideoCard(props: CardProps) {
   const editBtnOnClick = () => {};
 
   const deleteBtnOnClick = () => {
-    console.log(confirm("Are you sure ?"));
+    setShowDeleteVideoModal(true)
   };
 
   return (
-    <StyledCard>
-      <div>
-        {props.length && <div className="duration">{props.length}</div>}
-        <img
-          src={`${import.meta.env.VITE_API_ENDPOINT}/video/cover/${
-            props.coverImage
-          }`}
-          alt=""
+    <>
+      {showDeleteVideoModal && (
+        <DeleteVideoModal
+          onClose={() => setShowDeleteVideoModal(false)}
+          videoId={props.id}
         />
-        <button className="play" onClick={playBtnOnClick}>
-          <FaPlay />
-        </button>
-      </div>
-      {user && (
-        <StyledUserPicture $image={user.picture}>
-          <div></div>
-        </StyledUserPicture>
       )}
-      <div className="misc">
+      <StyledCard>
+        <div>
+          {props.length && <div className="duration">{props.length}</div>}
+          <img
+            src={`${import.meta.env.VITE_API_ENDPOINT}/video/cover/${
+              props.coverImage
+            }`}
+            alt=""
+          />
+          <button className="play" onClick={playBtnOnClick}>
+            <FaPlay />
+          </button>
+        </div>
         {user && (
-          <div className="user-name">
-            <span>{user.name}</span>
-            <span className="dot"></span>
-          </div>
+          <StyledUserPicture $image={user.picture}>
+            <div></div>
+          </StyledUserPicture>
         )}
-        <h1 id="title">{props.title}</h1>
-        {uploadDate && <div className="upload-date">{uploadDate}</div>}
-      </div>
-      {props.showControls && (
-        <StyledControls>
-          <button className="edit" onClick={editBtnOnClick}>
-            <MdModeEditOutline />
-          </button>
-          <button className="delete" onClick={deleteBtnOnClick}>
-            <FaDeleteLeft />
-          </button>
-        </StyledControls>
-      )}
-    </StyledCard>
+        <div className="misc">
+          {user && (
+            <div className="user-name">
+              <span>{user.name}</span>
+              <span className="dot"></span>
+            </div>
+          )}
+          <h1 id="title">{props.title}</h1>
+          {uploadDate && <div className="upload-date">{uploadDate}</div>}
+        </div>
+        {props.showControls && (
+          <StyledControls>
+            <button className="edit" onClick={editBtnOnClick}>
+              <MdModeEditOutline />
+            </button>
+            <button className="delete" onClick={deleteBtnOnClick}>
+              <FaDeleteLeft />
+            </button>
+          </StyledControls>
+        )}
+      </StyledCard>
+    </>
   );
 }
