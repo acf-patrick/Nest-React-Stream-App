@@ -3,7 +3,9 @@ import { styled } from "styled-components";
 import api from "../api";
 import { darken, lighten } from "polished";
 import { FaPlay } from "react-icons/fa";
+import { FaDeleteLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { MdModeEditOutline } from "react-icons/md";
 
 type CardProps = {
   id: string;
@@ -13,9 +15,11 @@ type CardProps = {
   userId: string;
   length?: string;
   hideUserData?: boolean;
+  showControls?: boolean;
 };
 
 const StyledCard = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
   border-radius: 15px;
@@ -65,7 +69,7 @@ const StyledCard = styled.div`
     }
   }
 
-  & > div:last-of-type {
+  .misc {
     padding: 0.5rem 1rem 2rem;
   }
 
@@ -159,6 +163,53 @@ const StyledUserPicture = styled.div<{ $image?: string }>`
   }
 `;
 
+const StyledControls = styled.div`
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+
+  button {
+    all: unset;
+    color: ${({ theme }) => theme.colors.background};
+    width: 3rem;
+    height: 3rem;
+    display: grid;
+    font-size: 1.5rem;
+    place-items: center;
+    cursor: pointer;
+    border-radius: 3rem;
+    transition: all 250ms;
+
+    &:hover {
+      background: transparent;
+      color: ${({ theme }) => theme.colors.primary};
+    }
+  }
+
+  .edit {
+    background: #2424ffa8;
+
+    &:hover {
+      outline: 3px solid #2424ffa8;
+    }
+  }
+
+  .delete {
+    background: #ff1d1d88;
+
+    svg {
+      transform: translateX(-1px);
+    }
+
+    &:hover {
+      outline: 3px solid #ff1d1d88;
+    }
+  }
+`;
+
 export default function VideoCard(props: CardProps) {
   const [user, setUser] = useState<{
     name: string;
@@ -223,6 +274,12 @@ export default function VideoCard(props: CardProps) {
     navigate(`/video/${props.id}`);
   };
 
+  const editBtnOnClick = () => {};
+
+  const deleteBtnOnClick = () => {
+    console.log(confirm("Are you sure ?"));
+  };
+
   return (
     <StyledCard>
       <div>
@@ -242,7 +299,7 @@ export default function VideoCard(props: CardProps) {
           <div></div>
         </StyledUserPicture>
       )}
-      <div>
+      <div className="misc">
         {user && (
           <div className="user-name">
             <span>{user.name}</span>
@@ -252,6 +309,16 @@ export default function VideoCard(props: CardProps) {
         <h1 id="title">{props.title}</h1>
         {uploadDate && <div className="upload-date">{uploadDate}</div>}
       </div>
+      {props.showControls && (
+        <StyledControls>
+          <button className="edit" onClick={editBtnOnClick}>
+            <MdModeEditOutline />
+          </button>
+          <button className="delete" onClick={deleteBtnOnClick}>
+            <FaDeleteLeft />
+          </button>
+        </StyledControls>
+      )}
     </StyledCard>
   );
 }

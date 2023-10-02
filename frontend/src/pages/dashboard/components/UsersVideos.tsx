@@ -74,7 +74,7 @@ export default function UsersVideos() {
       <StyledVideolist>
         {videos.map((video, i) => (
           <li key={i}>
-            <VideoCard {...video} hideUserData />
+            <VideoCard {...video} hideUserData showControls />
           </li>
         ))}
         <li>
