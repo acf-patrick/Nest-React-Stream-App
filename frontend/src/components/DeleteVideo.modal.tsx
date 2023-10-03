@@ -2,7 +2,6 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { styled } from "styled-components";
 import { lighten, darken } from "polished";
-import { useVideo } from "../hooks";
 
 type ModalProps = {
   videoId: string;
@@ -23,14 +22,13 @@ const StyledModal = styled.div`
         : lighten(0.25, theme.colors.background)};
 `;
 
-export default function DeleteVideoModal({ onClose, videoId }: ModalProps) {
+export default function DeleteVideoModal({ onClose }: ModalProps) {
   const container = document.querySelector("#modal-portal");
   if (!container) {
     return null;
   }
-
-  const videoTitle = useVideo(videoId)?.title;
-  const [processing, setProcessing] = useState(false);
+  
+  const [processing, _] = useState(false);
 
   return createPortal(
     <>
