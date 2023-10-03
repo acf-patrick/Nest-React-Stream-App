@@ -23,14 +23,13 @@ const StyledModal = styled.div`
         : lighten(0.25, theme.colors.background)};
 `;
 
-export default function DeleteVideoModal({ onClose, videoId }: ModalProps) {
+export default function DeleteVideoModal({ onClose }: ModalProps) {
   const container = document.querySelector("#modal-portal");
   if (!container) {
     return null;
   }
-
-  const videoTitle = useVideo(videoId)?.title;
-  const [processing, setProcessing] = useState(false);
+  
+  const [processing, _] = useState(false);
 
   return createPortal(
     <>
