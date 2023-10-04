@@ -1,4 +1,4 @@
-import { darken, lighten } from "polished";
+import { darken, lighten, transparentize } from "polished";
 import styled, { keyframes } from "styled-components";
 
 const appear = keyframes`
@@ -18,9 +18,12 @@ const StyledModal = styled.div`
   width: ${({ theme }) => theme.modal.width};
   animation: ${appear} 250ms both ease;
   background: ${({ theme }) =>
-    theme.theme === "light"
-      ? theme.colors.background
-      : lighten(0.1, theme.colors.background)};
+    transparentize(
+      0.05,
+      theme.theme === "light"
+        ? theme.colors.background
+        : lighten(0.1, theme.colors.background)
+    )};
   box-shadow: 0 5px 15px
     ${({ theme }) =>
       theme.theme === "light"
