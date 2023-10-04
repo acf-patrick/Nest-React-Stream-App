@@ -178,7 +178,7 @@ const StyledControls = styled.div`
     width: 3rem;
     height: 3rem;
     display: grid;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     place-items: center;
     cursor: pointer;
     border-radius: 3rem;
@@ -191,10 +191,10 @@ const StyledControls = styled.div`
   }
 
   .edit {
-    background: #2424ffa8;
+    background: #3f3fffa8;
 
     &:hover {
-      outline: 3px solid #2424ffa8;
+      outline: 3px solid #3f3fffa8;
     }
   }
 
@@ -279,7 +279,7 @@ export default function VideoCard(props: CardProps) {
   const editBtnOnClick = () => {};
 
   const deleteBtnOnClick = () => {
-    setShowDeleteVideoModal(true)
+    setShowDeleteVideoModal(true);
   };
 
   return (

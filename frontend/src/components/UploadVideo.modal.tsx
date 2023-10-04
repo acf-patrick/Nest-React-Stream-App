@@ -6,6 +6,7 @@ import { LiaFileVideoSolid } from "react-icons/lia";
 import { CiImageOn } from "react-icons/ci";
 import { MdMovie } from "react-icons/md";
 import { useState } from "react";
+import ModalContainer from "./modal.styled";
 import api from "../api";
 
 const blink = (theme: any) => keyframes`
@@ -13,14 +14,6 @@ from {
   color: ${theme.colors.primary};
 } to {
   color: ${theme.colors.quaternary};
-}
-`;
-
-const appear = keyframes`
-0% {
-  transform: translate(-50%, -50%) scale(0.5);
-} 100% {
-  transform: translate(-50%, -50%) scale(1);
 }
 `;
 
@@ -34,55 +27,7 @@ const StyledBackground = styled.div`
   backdrop-filter: blur(1px);
 `;
 
-const StyledModal = styled.div`
-  z-index: 2;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border-radius: 10px;
-  width: ${({ theme }) => theme.modal.width};
-  animation: ${appear} 250ms both ease;
-  background: ${({ theme }) =>
-    theme.theme === "light"
-      ? theme.colors.background
-      : lighten(0.1, theme.colors.background)};
-  box-shadow: 0 5px 15px
-    ${({ theme }) =>
-      theme.theme === "light"
-        ? darken(0.25, theme.colors.background)
-        : lighten(0.25, theme.colors.background)};
-
-  h1 {
-    font-size: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: unset;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid
-      ${({ theme }) =>
-        theme.theme === "light"
-          ? darken(0.25, theme.colors.background)
-          : lighten(0.25, theme.colors.background)};
-
-    button {
-      all: unset;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      width: 2rem;
-      height: 2rem;
-      border-radius: 2rem;
-      transition: background 300ms;
-
-      &:hover {
-        background: ${({ theme }) =>
-          theme.theme === "light"
-            ? darken(0.25, theme.colors.background)
-            : lighten(0.25, theme.colors.background)};
-      }
-    }
-  }
+const StyledModal = styled(ModalContainer)`
 
   progress {
     appearance: none;
@@ -418,7 +363,8 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
             style={{
               borderStyle: coverImage ? "solid" : "dashed",
             }}
-            onClick={inputContainerOnClick}>
+            onClick={inputContainerOnClick}
+          >
             {coverImage ? (
               <div className="cover-image">
                 <div>
@@ -456,7 +402,8 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
             style={{
               borderStyle: videoFile ? "solid" : "dashed",
             }}
-            onClick={inputContainerOnClick}>
+            onClick={inputContainerOnClick}
+          >
             {videoFile ? (
               <div className="video">
                 <div>
@@ -469,7 +416,8 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
                     <div className="video__upload">
                       <progress
                         value={upload.progress}
-                        max={upload.total}></progress>
+                        max={upload.total}
+                      ></progress>
                       <span>
                         {Math.round((100 * upload.progress) / upload.total)} %
                       </span>
@@ -528,7 +476,8 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
               type="button"
               onClick={() => {
                 onClose();
-              }}>
+              }}
+            >
               Cancel
             </button>
             <button>
