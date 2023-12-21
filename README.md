@@ -1,3 +1,5 @@
+[![publish](https://github.com/acf-patrick/Nest-React-Stream-App/actions/workflows/ci.yml/badge.svg)](https://github.com/acf-patrick/Nest-React-Stream-App/actions/workflows/ci.yml)
+
 <p align="center" >
   <img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" />
   <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" width="200" alt="React Logo" />
