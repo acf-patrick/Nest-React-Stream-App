@@ -1,32 +1,29 @@
 import {
-  Controller,
-  HttpCode,
-  Post,
-  Body,
-  UseFilters,
-  ServiceUnavailableException,
   BadRequestException,
-  NotAcceptableException,
-  InternalServerErrorException,
+  Body,
+  Controller,
   Get,
-  Req,
+  HttpCode,
+  InternalServerErrorException,
   Ip,
-  UseGuards,
-  Param,
-  ForbiddenException,
+  NotAcceptableException,
+  Post,
+  Req,
+  ServiceUnavailableException,
+  UseFilters,
+  UseGuards
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { SignupUserDto } from './dto/signup-user.dto';
-import { SigninUserDto } from './dto/signin-user.dto';
-import { PrismaClientExceptionFilter } from '../prisma-client-exception/prisma-client-exception.filter';
-import { MailService } from '../mail/mail.service';
-import { ResetPasswordService } from './reset-password.service';
-import { PrismaService } from '../prisma/prisma.service';
 import { Request } from 'express';
+import { MailService } from '../mail/mail.service';
+import { PrismaClientExceptionFilter } from '../prisma-client-exception/prisma-client-exception.filter';
+import { PrismaService } from '../prisma/prisma.service';
+import { AuthService } from './auth.service';
+import { SigninUserDto } from './dto/signin-user.dto';
+import { SignupUserDto } from './dto/signup-user.dto';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
-import { AccessTokenGuard } from './guards/acces-token.guard';
+import { ResetPasswordService } from './reset-password.service';
 
-@Controller('/api/v1/auth')
+@Controller('auth')
 @UseFilters(PrismaClientExceptionFilter)
 export class AuthController {
   constructor(

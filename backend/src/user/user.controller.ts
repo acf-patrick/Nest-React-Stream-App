@@ -12,17 +12,16 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { readFileSync } from 'fs';
 import { AccessTokenGuard } from '../auth/guards/acces-token.guard';
 import { ResetPasswordService } from '../auth/reset-password.service';
+import { FirebaseService } from '../firebase/firebase.service';
 import { SetPasswordDto } from './dto/set-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { FirebaseService } from '../firebase/firebase.service';
-import { readFileSync } from 'fs';
 
-@Controller('/api/v1/user')
+@Controller('user')
 export class UserController {
   constructor(
     private readonly userService: UserService,

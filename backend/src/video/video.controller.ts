@@ -29,7 +29,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { FirebaseService } from '../firebase/firebase.service';
 import { readFileSync } from 'fs';
 
-@Controller('/api/v1/video')
+@Controller('video')
 @UseFilters(PrismaClientExceptionFilter)
 export class VideoController {
   constructor(
