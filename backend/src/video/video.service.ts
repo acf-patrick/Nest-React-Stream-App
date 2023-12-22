@@ -242,6 +242,8 @@ export class VideoService {
         'You have not the right to delete this video',
       );
     }
+    
+    await this.prisma.video.delete({ where: { id } });
 
     for (let path of [video.video, video.coverImage]) {
       await this.firebase.delete(`datas/videos/${path}`);
@@ -254,7 +256,5 @@ export class VideoService {
         },
       );
     }
-
-    await this.prisma.video.delete({ where: { id } });
   }
 }
