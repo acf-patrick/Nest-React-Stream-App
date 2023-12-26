@@ -4,6 +4,8 @@ import { Logo } from "../../components";
 import api from "../../api";
 import { useState } from "react";
 import { VscLoading } from "react-icons/vsc";
+import themes from "../../styles/themes";
+import { lighten } from "polished";
 
 const spin = keyframes`
   from {
@@ -25,13 +27,26 @@ const Container = styled.div`
   width: 100vw;
   height: 100vh;
   display: flex;
+
+  @media (max-width: ${themes.screen.l}) {
+    position: relative;
+  }
 `;
 
 const Image = styled.div`
   background: url(/images/backgrounds/login-bg.jpg);
   background-size: cover;
+  background-position: center;
   flex-grow: 1;
   min-width: 65%;
+
+  @media (max-width: ${themes.screen.l}) {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 `;
 
 const Card = styled.div`
@@ -41,6 +56,11 @@ const Card = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  z-index: 1;
+
+  @media (max-width: ${themes.screen.l}) {
+    background: #00000075;
+  }
 
   h1 {
     text-transform: uppercase;
@@ -124,7 +144,7 @@ const Card = styled.div`
     font-size: 0.75rem;
 
     * {
-      color: ${({ theme }) => theme.colors.secondary};
+      color: ${({ theme }) => lighten(0.3, theme.colors.secondary)};
     }
   }
 
