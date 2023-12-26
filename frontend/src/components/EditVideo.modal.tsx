@@ -1,9 +1,11 @@
 import { darken, lighten } from "polished";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AiOutlineClose } from "react-icons/ai";
+import { FaRegFileImage } from "react-icons/fa";
 import { VscLoading } from "react-icons/vsc";
 import { keyframes, styled } from "styled-components";
+import api from "../api";
 import { useVideo } from "../hooks";
 import ModalContainer from "./modal.styled";
 
@@ -32,24 +34,70 @@ const StyledBackground = styled.div`
 const StyledModal = styled(ModalContainer)`
   width: 380px;
 
-  & > div {
+  form > div {
     padding: 0 1rem;
     display: flex;
-    align-items: center;
     gap: 1rem;
     border-bottom: 1px solid
       ${({ theme }) =>
         theme.theme === "light"
           ? darken(0.2, theme.colors.background)
           : lighten(0.2, theme.colors.background)};
+  }
 
-    & > div:first-of-type {
-      color: ${({ theme }) => theme.colors.quaternary};
-      font-size: 3.5rem;
+  .input-title {
+    margin-top: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+
+    input {
+      all: unset;
+      font-size: 0.85rem;
+      background: ${({ theme }) =>
+        theme.theme === "light"
+          ? darken(0.2, theme.colors.background)
+          : lighten(0.2, theme.colors.background)};
+      padding: 0.125rem 0.5rem;
+      border-radius: 3px;
+    }
+  }
+
+  .input-cover {
+    margin-top: 1rem;
+    padding-bottom: 0.5rem;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+
+    button {
+      all: unset;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+
+      svg {
+        font-size: 2rem;
+      }
+    }
+
+    img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      box-shadow: 0px 1px 15px #0000006c;
+    }
+
+    input {
+      display: none;
     }
   }
 
   .buttons {
+    display: flex;
+    gap: 1rem;
     padding: 1rem;
     justify-content: flex-end;
 
@@ -111,11 +159,35 @@ export default function EditVideoModal({ onClose, videoId }: ModalProps) {
     return null;
   }
 
+  const [videoCover, setVideoCover] = useState("");
   const [processing, setProcessing] = useState(false);
-  const video_ = useVideo(videoId);
+  const formRef = useRef<HTMLFormElement>(null);
+  const video = useVideo(videoId);
+
+  useEffect(() => {
+    if (video) {
+      setVideoCover(
+        import.meta.env.VITE_API_ENDPOINT + `/video/cover/${video.coverImage}`
+      );
+    }
+  }, [video]);
 
   const proceed = () => {
     setProcessing(true);
+
+    const datas = new FormData(formRef.current!);
+    api
+      .patch(`/video/${videoId}`, datas)
+      .then(() => {
+        location.reload();
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setProcessing(false));
+  };
+
+  const coverInputOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files![0];
+    setVideoCover(URL.createObjectURL(file));
   };
 
   return createPortal(
@@ -130,17 +202,54 @@ export default function EditVideoModal({ onClose, videoId }: ModalProps) {
       <StyledModal>
         <h1>
           <span>Edit video metadatas</span>
-          <button onClick={onClose}>
+          <button
+            onClick={() => {
+              if (!processing) {
+                onClose();
+              }
+            }}
+          >
             <AiOutlineClose />
           </button>
         </h1>
-        <div>C'est le test ça hein</div>
+        <form ref={formRef}>
+          <div className="input-title">
+            <label htmlFor="video-title">Video title</label>
+            <input
+              type="text"
+              name="title"
+              id="video-title"
+              defaultValue={video?.title}
+              maxLength={50}
+            />
+          </div>
+          <div className="input-cover">
+            <button
+              type="button"
+              onClick={(e) => {
+                const input = e.currentTarget
+                  .nextElementSibling as HTMLInputElement;
+                input.click();
+              }}
+            >
+              <span>Change video cover</span>
+              <FaRegFileImage />
+            </button>
+            <input
+              onChange={coverInputOnChange}
+              type="file"
+              accept="image/*"
+              name="cover"
+            />
+            <img src={videoCover} alt="video-cover" />
+          </div>
+        </form>
         <div className="buttons">
           <button onClick={onClose} className="cancel" disabled={processing}>
             Cancel
           </button>
           <button onClick={proceed} className="yes" disabled={processing}>
-            {processing ? <VscLoading /> : "Yes"}
+            {processing ? <VscLoading /> : "Update"}
           </button>
         </div>
       </StyledModal>

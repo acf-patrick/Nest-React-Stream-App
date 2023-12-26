@@ -7,6 +7,7 @@ import { FaDeleteLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { MdModeEditOutline } from "react-icons/md";
 import DeleteVideoModal from "./DeleteVideo.modal";
+import { EditVideoModal } from ".";
 
 type CardProps = {
   id: string;
@@ -217,6 +218,7 @@ export default function VideoCard(props: CardProps) {
     picture: string;
   } | null>(null);
 
+  const [showEditVideoModal, setShowEditVideoModal] = useState(false);
   const [showDeleteVideoModal, setShowDeleteVideoModal] = useState(false);
   const [uploadDate, setUploadDate] = useState("");
   const navigate = useNavigate();
@@ -276,7 +278,9 @@ export default function VideoCard(props: CardProps) {
     navigate(`/video/${props.id}`);
   };
 
-  const editBtnOnClick = () => {};
+  const editBtnOnClick = () => {
+    setShowEditVideoModal(true);
+  };
 
   const deleteBtnOnClick = () => {
     setShowDeleteVideoModal(true);
@@ -287,6 +291,12 @@ export default function VideoCard(props: CardProps) {
       {showDeleteVideoModal && (
         <DeleteVideoModal
           onClose={() => setShowDeleteVideoModal(false)}
+          videoId={props.id}
+        />
+      )}
+      {showEditVideoModal && (
+        <EditVideoModal
+          onClose={() => setShowEditVideoModal(false)}
           videoId={props.id}
         />
       )}
