@@ -6,6 +6,8 @@ import StyledVideolist from "./video-list.styled";
 import { darken, lighten, transparentize } from "polished";
 import { useState } from "react";
 import { useVideos } from "../../../hooks";
+import { MdOutlineAdd } from "react-icons/md";
+import themes from "../../../styles/themes";
 
 const StyledNewVideoButton = styled.button`
   display: flex;
@@ -42,6 +44,42 @@ const StyledNewVideoButton = styled.button`
   }
 `;
 
+const StyledTitle = styled.h1`
+  button {
+    display: none;
+  }
+
+  &:after {
+    display: none !important;
+  }
+
+  @media (max-width: ${themes.screen.s}) {
+    button {
+      all: unset;
+      display: grid;
+      place-items: center;
+      position: absolute;
+      width: 3rem;
+      height: 100%;
+      background: ${({ theme }) =>
+        theme.theme === "light"
+          ? darken(0.05, theme.colors.background)
+          : lighten(0.05, theme.colors.background)};
+      left: 100%;
+      border-top: 2px solid
+        ${({ theme }) =>
+          theme.theme === "light"
+            ? darken(0.1, theme.colors.background)
+            : lighten(0.1, theme.colors.background)};
+      border-bottom: 2px solid
+        ${({ theme }) =>
+          theme.theme === "light"
+            ? darken(0.1, theme.colors.background)
+            : lighten(0.1, theme.colors.background)};
+    }
+  }
+`;
+
 const NewVideoButton = (props: { toggleModal: () => void }) => (
   <StyledNewVideoButton onClick={props.toggleModal}>
     <span className="plus">
@@ -65,17 +103,32 @@ export default function UsersVideos() {
           }}
         />
       )}
-      <h1>
+      <StyledTitle>
         <span>Your videos</span>
         <MdVideoLibrary />
-      </h1>
+        <button onClick={() => setShowModal(true)}>
+          <MdOutlineAdd />
+        </button>
+      </StyledTitle>
       <StyledVideolist>
-        {videos.map((video, i) => (
+        {[
+          ...videos,
+          ...videos,
+          ...videos,
+          ...videos,
+          ...videos,
+          ...videos,
+          ...videos,
+          ...videos,
+          ...videos,
+          ...videos,
+          ...videos,
+        ].map((video, i) => (
           <li key={i}>
             <VideoCard {...video} hideUserData showControls />
           </li>
         ))}
-        <li>
+        <li className="new-video-btn">
           <NewVideoButton toggleModal={() => setShowModal(true)} />
         </li>
       </StyledVideolist>

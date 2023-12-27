@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Logo } from "../../../components";
 import { rgba } from "polished";
 import { Link } from "react-router-dom";
+import themes from "../../../styles/themes";
 
 type Link = {
   icon: React.JSX.Element;
@@ -24,11 +25,15 @@ type Section = {
 const Container = styled.nav`
   display: flex;
   flex-direction: column;
-  min-width: 280px;
+  min-width: 180px;
   max-width: 280px;
   align-items: stretch;
   padding-top: 1rem;
   border-right: 2px solid ${({ theme }) => rgba(theme.colors.secondary, 0.3)};
+
+  @media (max-width: ${themes.screen.m}) {
+    display: none;
+  }
 
   ul {
     list-style: none;

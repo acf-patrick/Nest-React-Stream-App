@@ -45,7 +45,7 @@ const themes = {
   },
   screen: {
     xs: "375px",
-    s: "425px",
+    s: "426px",
     m: "768px",
     l: "1024px",
     xl: "1440px",

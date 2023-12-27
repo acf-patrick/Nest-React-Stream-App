@@ -1,13 +1,14 @@
 import { darken, lighten, transparentize } from "polished";
-import { createPortal } from "react-dom";
-import { keyframes, styled } from "styled-components";
-import { RxCross2 } from "react-icons/rx";
-import { LiaFileVideoSolid } from "react-icons/lia";
-import { CiImageOn } from "react-icons/ci";
-import { MdMovie } from "react-icons/md";
 import { useState } from "react";
-import ModalContainer from "./modal.styled";
+import { createPortal } from "react-dom";
+import { CiImageOn } from "react-icons/ci";
+import { LiaFileVideoSolid } from "react-icons/lia";
+import { MdMovie } from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
+import { keyframes, styled } from "styled-components";
 import api from "../api";
+import themes from "../styles/themes";
+import ModalContainer from "./modal.styled";
 
 const blink = (theme: any) => keyframes`
 from {
@@ -28,6 +29,14 @@ const StyledBackground = styled.div`
 `;
 
 const StyledModal = styled(ModalContainer)`
+  width: 100%;
+  
+  @media (max-width: ${themes.screen.s}) {
+    form {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+  }
 
   progress {
     appearance: none;
@@ -131,6 +140,10 @@ const StyledModal = styled(ModalContainer)`
     animation: ${({ theme }) => blink(theme)} 250ms 6 alternate;
   }
 
+  .inputs {
+    gap: 1rem;
+  }
+
   .buttons {
     flex-direction: row;
     margin-top: 2rem;
@@ -142,7 +155,7 @@ const StyledModal = styled(ModalContainer)`
       flex-grow: 1;
       text-align: center;
       border-radius: 5px;
-      padding: 12px 2rem;
+      padding: 12px 0;
       font-size: 1.1rem;
       transition: outline 500ms, background 500ms, color 500ms;
 
@@ -357,119 +370,118 @@ export default function UploadVideoModal({ onClose }: { onClose: () => void }) {
               id="video-title"
             />
           </div>
-          <div
-            id="cover"
-            className="file"
-            style={{
-              borderStyle: coverImage ? "solid" : "dashed",
-            }}
-            onClick={inputContainerOnClick}
-          >
-            {coverImage ? (
-              <div className="cover-image">
-                <div>
-                  <img src={coverImage.url} alt="" />
-                </div>
-                <div>{coverImage.name}</div>
-              </div>
-            ) : (
-              <>
-                <div className="icon">
-                  <CiImageOn />
-                </div>
-                <label htmlFor="cover-image">Select cover image</label>
-              </>
-            )}
-            <input
-              onChange={(e) => {
-                const files = e.currentTarget.files;
-                if (files && files.length > 0) {
-                  setCoverImage({
-                    name: clampName(files[0].name),
-                    url: URL.createObjectURL(files[0]),
-                  });
-                }
+          <div className="inputs">
+            <div
+              id="cover"
+              className="file"
+              style={{
+                borderStyle: coverImage ? "solid" : "dashed",
               }}
-              type="file"
-              accept="image/*"
-              name="cover"
-              id="cover-image"
-            />
-          </div>
-          <div
-            id="video"
-            className="file"
-            style={{
-              borderStyle: videoFile ? "solid" : "dashed",
-            }}
-            onClick={inputContainerOnClick}
-          >
-            {videoFile ? (
-              <div className="video">
-                <div>
-                  <MdMovie />
+              onClick={inputContainerOnClick}
+            >
+              {coverImage ? (
+                <div className="cover-image">
+                  <div>
+                    <img src={coverImage.url} alt="" />
+                  </div>
+                  <div>{coverImage.name}</div>
                 </div>
-                <div>
-                  <span>{videoFile.name}</span>
-                  <span className="video__size">{videoFile.size}</span>
-                  {upload && upload.started && (
-                    <div className="video__upload">
-                      <progress
-                        value={upload.progress}
-                        max={upload.total}
-                      ></progress>
-                      <span>
-                        {Math.round((100 * upload.progress) / upload.total)} %
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="icon">
-                  <LiaFileVideoSolid />
-                </div>
-                <label htmlFor="file-input">Select video file</label>
-              </>
-            )}
-            <input
-              onChange={(e) => {
-                const files = e.currentTarget.files;
-                if (files && files.length > 0) {
-                  let videoSize: string;
-                  const size = files[0].size;
-
-                  if (size >= 1000 * 1_000_000) {
-                    // Go
-                    videoSize = `${Math.round(size / 1_000_000_000)} GB`;
-                  } else if (size >= 1_000_000) {
-                    // Mo
-                    videoSize = `${Math.round(size / 1_000_000)} MB`;
-                  } else if (size >= 1000) {
-                    // Ko
-                    videoSize = `${Math.round(size / 1_000)} KB`;
-                  } else {
-                    videoSize = `${size} Bytes`;
+              ) : (
+                <>
+                  <div className="icon">
+                    <CiImageOn />
+                  </div>
+                  <label htmlFor="cover-image">Select cover image</label>
+                </>
+              )}
+              <input
+                onChange={(e) => {
+                  const files = e.currentTarget.files;
+                  if (files && files.length > 0) {
+                    setCoverImage({
+                      name: clampName(files[0].name),
+                      url: URL.createObjectURL(files[0]),
+                    });
                   }
-
-                  setUpload({
-                    started: false,
-                    progress: 0,
-                    total: size,
-                  });
-
-                  setVideoFile({
-                    name: clampName(files[0].name),
-                    size: videoSize,
-                  });
-                }
+                }}
+                type="file"
+                accept="image/*"
+                name="cover"
+                id="cover-image"
+              />
+            </div>
+            <div
+              id="video"
+              className="file"
+              style={{
+                borderStyle: videoFile ? "solid" : "dashed",
               }}
-              type="file"
-              name="video"
-              id="file-input"
-              accept="video/*"
-            />
+              onClick={inputContainerOnClick}
+            >
+              {videoFile ? (
+                <div className="video">
+                  <div>
+                    <MdMovie />
+                  </div>
+                  <div>
+                    <span>{videoFile.name}</span>
+                    <span className="video__size">{videoFile.size}</span>
+                    {upload && upload.started && (
+                      <div className="video__upload">
+                        <progress
+                          value={upload.progress}
+                          max={upload.total}
+                        ></progress>
+                        <span>
+                          {Math.round((100 * upload.progress) / upload.total)} %
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="icon">
+                    <LiaFileVideoSolid />
+                  </div>
+                  <label htmlFor="file-input">Select video file</label>
+                </>
+              )}
+              <input
+                onChange={(e) => {
+                  const files = e.currentTarget.files;
+                  if (files && files.length > 0) {
+                    let videoSize: string;
+                    const size = files[0].size;
+                    if (size >= 1000 * 1_000_000) {
+                      // Go
+                      videoSize = `${Math.round(size / 1_000_000_000)} GB`;
+                    } else if (size >= 1_000_000) {
+                      // Mo
+                      videoSize = `${Math.round(size / 1_000_000)} MB`;
+                    } else if (size >= 1000) {
+                      // Ko
+                      videoSize = `${Math.round(size / 1_000)} KB`;
+                    } else {
+                      videoSize = `${size} Bytes`;
+                    }
+                    setUpload({
+                      started: false,
+                      progress: 0,
+                      total: size,
+                    });
+                    setVideoFile({
+                      name: clampName(files[0].name),
+                      size: videoSize,
+                    });
+                  }
+                }}
+                type="file"
+                name="video"
+                id="file-input"
+                accept="video/*"
+              />
+            </div>
           </div>
           <div className="buttons">
             <button

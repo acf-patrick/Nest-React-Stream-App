@@ -1,13 +1,14 @@
-import { keyframes, styled } from "styled-components";
-import { FiSearch } from "react-icons/fi";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { FaMoon, FaSun } from "react-icons/fa";
-import { GoBell } from "react-icons/go";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useContext, useState } from "react";
 import { rgba } from "polished";
-import ThemeContext from "../contexts/theme";
+import { useContext, useEffect, useState } from "react";
+import { FaMoon, FaSun } from "react-icons/fa";
+import { FiSearch } from "react-icons/fi";
+import { GoBell } from "react-icons/go";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
+import { keyframes, styled } from "styled-components";
 import api from "../api";
+import ThemeContext from "../contexts/theme";
+import themes from "../styles/themes";
 
 const appears = keyframes`
   from {
@@ -31,13 +32,18 @@ const nameAppears = keyframes`
 
 const Container = styled.nav`
   display: flex;
+  flex-direction: row-reverse;
   justify-content: space-between;
-  padding-top: 1.75rem;
+  padding-top: 1rem;
 
   .left {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
     margin-left: 2rem;
+
+    @media (max-width: ${themes.screen.l}) {
+      display: none;
+    }
   }
 
   .right {
@@ -153,6 +159,10 @@ const Container = styled.nav`
       font-weight: bold;
       margin-left: 0.5rem;
       animation: ${nameAppears} 500ms 750ms both;
+
+      @media (max-width: ${themes.screen.m}) {
+        display: none;
+      }
     }
   }
 
@@ -213,22 +223,6 @@ function Header() {
 
   return (
     <Container>
-      <div className="left">
-        <div className="buttons">
-          <button disabled>
-            <IoIosArrowBack />
-          </button>
-          <button>
-            <IoIosArrowForward />
-          </button>
-        </div>
-        <div className="searchbar">
-          <label htmlFor="search-input">
-            <FiSearch />
-          </label>
-          <input type="text" id="search-input" placeholder="Search video..." />
-        </div>
-      </div>
       <div className="right">
         <button>
           <GoBell />
@@ -246,6 +240,22 @@ function Header() {
               }}
             ></div>
           </div>
+        </div>
+      </div>
+      <div className="left">
+        <div className="buttons">
+          <button disabled>
+            <IoIosArrowBack />
+          </button>
+          <button>
+            <IoIosArrowForward />
+          </button>
+        </div>
+        <div className="searchbar">
+          <label htmlFor="search-input">
+            <FiSearch />
+          </label>
+          <input type="text" id="search-input" placeholder="Search video..." />
         </div>
       </div>
     </Container>

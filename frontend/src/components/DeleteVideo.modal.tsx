@@ -8,6 +8,7 @@ import { VscLoading } from "react-icons/vsc";
 import { AiOutlineClose } from "react-icons/ai";
 import { PiWarningDiamondFill } from "react-icons/pi";
 import api from "../api";
+import themes from "../styles/themes";
 
 type ModalProps = {
   videoId: string;
@@ -29,10 +30,13 @@ const StyledBackground = styled.div`
   top: 0;
   bottom: 0;
   backdrop-filter: blur(1px);
+  z-index: 1;
 `;
 
 const StyledModal = styled(ModalContainer)`
-  width: 380px;
+  @media (min-width: ${themes.screen.m}) {
+    width: 380px;
+  }
 
   & > div {
     padding: 0 1rem;
@@ -182,7 +186,7 @@ export default function DeleteVideoModal({ onClose: cb, videoId }: ModalProps) {
             <PiWarningDiamondFill />
           </div>
           <div>
-            <p>You are about to delete this video :</p>
+            <p>You are about to delete :</p>
             <p className="video-title">{videoTitle}</p>
           </div>
         </div>

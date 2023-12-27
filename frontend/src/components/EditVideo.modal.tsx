@@ -8,6 +8,7 @@ import { keyframes, styled } from "styled-components";
 import api from "../api";
 import { useVideo } from "../hooks";
 import ModalContainer from "./modal.styled";
+import themes from "../styles/themes";
 
 type ModalProps = {
   videoId: string;
@@ -29,10 +30,19 @@ const StyledBackground = styled.div`
   top: 0;
   bottom: 0;
   backdrop-filter: blur(1px);
+  z-index: 1;
 `;
 
 const StyledModal = styled(ModalContainer)`
-  width: 380px;
+  @media (min-width: ${themes.screen.m}) {
+    width: 380px;
+  }
+
+  button {
+    span {
+      font-size: 0.75rem;
+    }
+  }
 
   form > div {
     padding: 0 1rem;
