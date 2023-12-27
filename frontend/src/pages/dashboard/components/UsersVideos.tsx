@@ -111,23 +111,15 @@ export default function UsersVideos() {
         </button>
       </StyledTitle>
       <StyledVideolist>
-        {[
-          ...videos,
-          ...videos,
-          ...videos,
-          ...videos,
-          ...videos,
-          ...videos,
-          ...videos,
-          ...videos,
-          ...videos,
-          ...videos,
-          ...videos,
-        ].map((video, i) => (
-          <li key={i}>
-            <VideoCard {...video} hideUserData showControls />
-          </li>
-        ))}
+        {videos.length ? (
+          videos.map((video, i) => (
+            <li key={i}>
+              <VideoCard {...video} hideUserData showControls />
+            </li>
+          ))
+        ) : (
+          <h2>You don't have yet</h2>
+        )}
         <li className="new-video-btn">
           <NewVideoButton toggleModal={() => setShowModal(true)} />
         </li>

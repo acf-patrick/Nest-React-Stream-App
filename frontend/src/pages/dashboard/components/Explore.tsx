@@ -4,9 +4,11 @@ import { useVideos } from "../../../hooks";
 import { VideoCard } from "../../../components";
 import styled from "styled-components";
 
-const StyledTitle = styled.h1`
+const StyledTitle = styled.h2`
   justify-content: center;
   margin-top: 3rem;
+  text-align: center;
+  font-size: 2rem;
 `;
 
 export default function Explore() {

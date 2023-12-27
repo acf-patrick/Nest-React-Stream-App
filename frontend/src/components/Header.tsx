@@ -1,6 +1,7 @@
-import { rgba } from "polished";
+import { rgba, transparentize } from "polished";
 import { useContext, useEffect, useState } from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
+import { BiMenuAltLeft } from "react-icons/bi";
 import { FiSearch } from "react-icons/fi";
 import { GoBell } from "react-icons/go";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
@@ -33,6 +34,7 @@ const nameAppears = keyframes`
 const Container = styled.nav`
   display: flex;
   flex-direction: row-reverse;
+  align-items: center;
   justify-content: space-between;
   padding-top: 1rem;
 
@@ -43,6 +45,23 @@ const Container = styled.nav`
 
     @media (max-width: ${themes.screen.l}) {
       display: none;
+    }
+  }
+
+  .menu-btn {
+    all: unset;
+    display: none;
+    margin-left: 1.25rem;
+    outline: 2px solid
+      ${({ theme }) => transparentize(0.75, theme.colors.primary)};
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.5rem;
+    border-radius: 5px;
+
+    @media (max-width: ${themes.screen.m}) {
+      display: grid;
+      place-items: center;
     }
   }
 
@@ -182,7 +201,7 @@ const Container = styled.nav`
   }
 `;
 
-function Header() {
+function Header({ showSidebar }: { showSidebar: () => void }) {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useContext(ThemeContext);
 
@@ -258,6 +277,9 @@ function Header() {
           <input type="text" id="search-input" placeholder="Search video..." />
         </div>
       </div>
+      <button className="menu-btn" onClick={showSidebar}>
+        <BiMenuAltLeft />
+      </button>
     </Container>
   );
 }

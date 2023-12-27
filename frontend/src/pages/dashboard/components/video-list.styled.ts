@@ -11,13 +11,22 @@ const StyledVideoList = styled.ul`
   margin-top: 1.5rem;
   padding-right: 2rem;
 
+  h2 {
+    display: none;
+  }
+
   @media (max-width: ${themes.screen.l}) {
     grid-template-columns: 1fr 1fr;
   }
 
   @media (max-width: ${themes.screen.s}) {
     grid-template-columns: 1fr;
-    
+   
+    h2 {
+      display: block;
+      text-align: center;
+    }
+
     .new-video-btn {
       display: none;
     }

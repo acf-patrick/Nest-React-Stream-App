@@ -4,6 +4,7 @@ import { Header } from "../../components";
 import { Sidebar } from "./components";
 import themes from "../../styles/themes";
 import { darken, lighten } from "polished";
+import { useState } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -82,11 +83,13 @@ const Container = styled.div`
 `;
 
 function Dashboard() {
+  const [showSidebar, setShowSidebar] = useState(false);
+
   return (
     <Container>
-      <Sidebar />
+      <Sidebar show={showSidebar} hide={() => setShowSidebar(false)} />
       <main>
-        <Header />
+        <Header showSidebar={() => setShowSidebar(true)} />
         <div className="outlet">
           <Outlet />
         </div>

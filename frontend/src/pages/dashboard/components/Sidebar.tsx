@@ -6,9 +6,10 @@ import { IoExitOutline } from "react-icons/io5";
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Logo } from "../../../components";
-import { rgba } from "polished";
+import { rgba, transparentize } from "polished";
 import { Link } from "react-router-dom";
 import themes from "../../../styles/themes";
+import { createPortal } from "react-dom";
 
 type Link = {
   icon: React.JSX.Element;
@@ -22,17 +23,27 @@ type Section = {
   links: Link[];
 };
 
-const Container = styled.nav`
+const Container = styled.nav<{ $show: boolean }>`
   display: flex;
   flex-direction: column;
   min-width: 180px;
   max-width: 280px;
   align-items: stretch;
+  background: ${({ theme }) => theme.colors.background};
   padding-top: 1rem;
   border-right: 2px solid ${({ theme }) => rgba(theme.colors.secondary, 0.3)};
+  transition: transform 250ms ease-out, opacity 250ms;
 
   @media (max-width: ${themes.screen.m}) {
-    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: 0;
+    opacity: ${({ $show }) => ($show ? 1 : 0)};
+    transform: ${({ $show }) => ($show ? "translate(0)" : "translateX(-100%)")};
+    box-shadow: 0 0 15px
+      ${({ theme }) => transparentize(0.75, theme.colors.primary)};
   }
 
   ul {
@@ -105,7 +116,28 @@ const StyledLink = styled.li<{ $active: boolean }>`
   }
 `;
 
-function Sidebar() {
+const StyledBluredBackground = styled.div`
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  backdrop-filter: blur(2px);
+
+  @media (max-width: ${themes.screen.m}) {
+    display: block;
+  }
+`;
+
+const BluredBackground = ({ onClick }: { onClick: () => void }) => {
+  const container = document.querySelector("#modal-portal");
+  if (container === null) return null;
+  return createPortal(<StyledBluredBackground onClick={onClick} />, container);
+};
+
+function Sidebar({ show, hide }: { show: boolean; hide: () => void }) {
   const sections: Section[] = [
     {
       label: "Menu",
@@ -157,7 +189,7 @@ function Sidebar() {
   }, [location]);
 
   return (
-    <Container>
+    <Container $show={show}>
       <h1 className="logo">
         <Logo />
       </h1>
@@ -186,6 +218,7 @@ function Sidebar() {
           </ul>
         </div>
       ))}
+      {show && <BluredBackground onClick={hide} />}
     </Container>
   );
 }
