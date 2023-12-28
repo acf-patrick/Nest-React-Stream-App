@@ -33,11 +33,21 @@ const StyledContainer = styled.div`
 
   form {
     display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
     gap: 1rem;
+    flex-wrap: wrap;
 
     & > div:first-of-type {
-      min-width: 520px;
+      padding-right: 1rem;
+    }
+
+    & > div:last-of-type {
+      width: 100%;
+      max-width: 520px;
+
       & > div {
+        padding-right: 1rem;
         margin-bottom: 1rem;
       }
     }
@@ -77,10 +87,12 @@ const StyledContainer = styled.div`
   }
 
   input {
+    box-sizing: border-box;
     color: ${({ theme }) => theme.colors.primary};
     padding: 5px 7px;
     border-radius: 5px;
-    min-width: 360px;
+    width: 100%;
+    max-width: 360px;
     border: 1.5px solid
       ${({ theme }) =>
         theme.theme === "light"
@@ -200,6 +212,37 @@ export default function Settings() {
       <h1>Account settings</h1>
       <form onSubmit={formOnSubmit}>
         <div>
+          <label>Profile picture</label>
+          <StyledPictureSelector
+            $image={
+              image
+                ? image
+                : user?.avatar
+                ? `${import.meta.env.VITE_API_ENDPOINT}/user/picture/${
+                    user.avatar
+                  }`
+                : "/images/profile-pic.png"
+            }
+          >
+            <label htmlFor="profil-pic" className="edit">
+              <BiPencil />
+              <span>Edit</span>
+            </label>
+            <input
+              onChange={(e) => {
+                const files = e.currentTarget.files;
+                if (files && files.length > 0) {
+                  setImage(URL.createObjectURL(files[0]));
+                }
+              }}
+              type="file"
+              accept="image/*"
+              id="profil-pic"
+              name="avatar"
+            />
+          </StyledPictureSelector>
+        </div>
+        <div>
           <div>
             <label htmlFor="full-name">Full name</label>
             <input
@@ -287,37 +330,6 @@ export default function Settings() {
               {uploading && <AiOutlineLoading />}
             </button>
           </div>
-        </div>
-        <div>
-          <label>Profile picture</label>
-          <StyledPictureSelector
-            $image={
-              image
-                ? image
-                : user?.avatar
-                ? `${import.meta.env.VITE_API_ENDPOINT}/user/picture/${
-                    user.avatar
-                  }`
-                : "/images/profile-pic.png"
-            }
-          >
-            <label htmlFor="profil-pic" className="edit">
-              <BiPencil />
-              <span>Edit</span>
-            </label>
-            <input
-              onChange={(e) => {
-                const files = e.currentTarget.files;
-                if (files && files.length > 0) {
-                  setImage(URL.createObjectURL(files[0]));
-                }
-              }}
-              type="file"
-              accept="image/*"
-              id="profil-pic"
-              name="avatar"
-            />
-          </StyledPictureSelector>
         </div>
       </form>
     </StyledContainer>

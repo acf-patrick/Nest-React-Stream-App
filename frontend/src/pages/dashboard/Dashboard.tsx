@@ -22,6 +22,10 @@ const Container = styled.div`
   .outlet {
     padding-left: 3rem;
 
+    @media (max-width: ${themes.screen.s}) {
+      padding-left: 1.5rem;
+    }
+
     & > div > h1 {
       color: ${({ theme }) => theme.colors.primary};
       display: flex;
@@ -52,7 +56,7 @@ const Container = styled.div`
           theme.theme === "light"
             ? darken(0.05, theme.colors.background)
             : lighten(0.05, theme.colors.background)};
-        transform: translateX(-3rem);
+        transform: translateX(-1.5rem);
         padding-left: 1rem;
 
         &:after {
@@ -60,6 +64,7 @@ const Container = styled.div`
           display: block;
           content: "";
           width: 3rem;
+          transform: translateX(-50%);
           height: 100%;
           background: ${({ theme }) =>
             theme.theme === "light"

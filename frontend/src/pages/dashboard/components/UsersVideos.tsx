@@ -60,6 +60,7 @@ const StyledTitle = styled.h1`
       place-items: center;
       position: absolute;
       width: 3rem;
+      transform: translateX(-1.5rem);
       height: 100%;
       background: ${({ theme }) =>
         theme.theme === "light"
