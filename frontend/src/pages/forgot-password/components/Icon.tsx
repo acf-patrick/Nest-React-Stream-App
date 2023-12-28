@@ -1,3 +1,4 @@
+import { transparentize } from "polished";
 import { styled } from "styled-components";
 
 const Container = styled.p`
@@ -7,7 +8,8 @@ const Container = styled.p`
   span {
     padding: 1rem;
     // border: 1px solid ${({ theme }) => theme.colors.secondary};
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 2px
+      ${({ theme }) => transparentize(0.5, theme.colors.primary)};
     display: grid;
     place-items: center;
     max-width: 28px;

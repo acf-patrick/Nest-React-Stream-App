@@ -30,7 +30,12 @@ const ThemeSwipper = styled.div<{ $color: string }>`
 
 function App() {
   const [showSwipper, setShowSwipper] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const preferredTheme = sessionStorage.getItem("theme");
+  const [theme, setTheme] = useState<"dark" | "light">(
+    preferredTheme === "dark" || preferredTheme === "light"
+      ? preferredTheme
+      : "dark"
+  );
 
   useEffect(() => {
     document.body.style.background =
@@ -48,6 +53,9 @@ function App() {
           setShowSwipper(true);
 
           setTheme((theme) => {
+            const newTheme = theme === "light" ? "dark" : "light";
+            sessionStorage.setItem("theme", newTheme);
+
             setTimeout(() => {
               setShowSwipper(false);
 
@@ -60,7 +68,7 @@ function App() {
               }
             }, themes.swipperTimeout);
 
-            return theme === "light" ? "dark" : "light";
+            return newTheme;
           });
         },
       }}

@@ -28,6 +28,7 @@ const Form = styled.form`
     font-size: 2rem;
     text-align: center;
     background: transparent;
+    color: ${({ theme }) => theme.colors.primary};
     border: none;
     outline: none;
 
@@ -88,6 +89,7 @@ const Form = styled.form`
     cursor: pointer;
     font-weight: bold;
     font-size: 1rem;
+    color: ${({ theme }) => theme.colors.primary};
   }
 `;
 

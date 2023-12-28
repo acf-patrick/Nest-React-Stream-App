@@ -58,6 +58,14 @@ const Card = styled.div`
   align-items: center;
   z-index: 1;
 
+  @media (max-width: ${themes.screen.s}) {
+    color: white;
+
+    input {
+      color: #ffffff76 !important;
+    }
+  }
+
   @media (max-width: ${themes.screen.l}) {
     background: #00000075;
   }

@@ -1,10 +1,15 @@
 import styled from "styled-components";
+import themes from "../../../styles/themes";
 
 const Container = styled.div`
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+
+  @media (max-width: ${themes.screen.s}) {
+    bottom: 5vh;
+  }
 
   ul {
     list-style: none;
