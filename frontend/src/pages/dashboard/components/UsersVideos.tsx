@@ -113,7 +113,15 @@ export default function UsersVideos() {
       </StyledTitle>
       <StyledVideolist>
         {videos.length ? (
-          videos.map((video, i) => (
+          [
+            ...videos,
+            ...videos,
+            ...videos,
+            ...videos,
+            ...videos,
+            ...videos,
+            ...videos,
+          ].map((video, i) => (
             <li key={i}>
               <VideoCard {...video} hideUserData showControls />
             </li>
