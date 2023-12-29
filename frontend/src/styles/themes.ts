@@ -43,6 +43,13 @@ const themes = {
   modal: {
     width: "480px",
   },
+  screen: {
+    xs: "375px",
+    s: "426px",
+    m: "768px",
+    l: "1024px",
+    xl: "1440px",
+  },
 };
 
 export default themes;

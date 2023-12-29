@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import { darken, lighten } from "polished";
+import themes from "../../styles/themes";
 
 const errorShowing = keyframes`
   from {
@@ -15,11 +16,26 @@ const errorShowing = keyframes`
   }
 `;
 
+const StyledBackground = styled.div`
+  display: none;
+  height: 120px;
+  background: url("/images/backgrounds/animated-bg.gif");
+  background-size: cover;
+  position: sticky;
+  top: 0;
+
+  @media (max-width: ${themes.screen.s}) {
+    display: block;
+  }
+`;
+
 const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-  display: grid;
-  grid-template-columns: 60% 40%;
+  @media (min-width: ${themes.screen.l}) {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 60% 40%;
+  }
 `;
 
 const Card = styled.div`
@@ -27,6 +43,11 @@ const Card = styled.div`
   padding: 0;
   display: grid;
   place-items: center;
+
+  @media (max-width: ${themes.screen.m}) {
+    display: block;
+    padding: 0 1.5rem 1rem;
+  }
 
   p {
     font-size: 1.5rem;
@@ -50,8 +71,10 @@ const Card = styled.div`
   }
 
   .inner {
-    /* padding: 0 5rem; */
-    min-width: 480px;
+    @media (min-width: ${themes.screen.m}) {
+      min-width: 480px;
+    }
+
     margin: 0 auto;
   }
 
@@ -59,6 +82,10 @@ const Card = styled.div`
     display: grid;
     gap: 2rem;
     grid-template-columns: 1fr 1fr;
+
+    @media (max-width: ${themes.screen.s}) {
+      grid-template-columns: 1fr;
+    }
   }
 
   .confirm-pwd,
@@ -167,6 +194,7 @@ function Signup() {
 
   return (
     <Container>
+      <StyledBackground />
       <Card>
         <div className="inner">
           <h1>

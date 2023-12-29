@@ -205,28 +205,6 @@ export class VideoService {
     }
   }
 
-  async update(id: string, video: PostVideoDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: video.userEmail },
-      select: { id: true },
-    });
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-
-    const { userEmail, ...rest } = video;
-    const record = {
-      userId: user.id,
-      ...rest,
-    };
-
-    return await this.prisma.video.upsert({
-      where: { id },
-      update: record,
-      create: { id, ...record },
-    });
-  }
-
   async delete(id: string, userEmail: string) {
     const video = await this.prisma.video.findUnique({
       where: { id },
@@ -242,6 +220,8 @@ export class VideoService {
         'You have not the right to delete this video',
       );
     }
+    
+    await this.prisma.video.delete({ where: { id } });
 
     for (let path of [video.video, video.coverImage]) {
       await this.firebase.delete(`datas/videos/${path}`);
@@ -254,7 +234,5 @@ export class VideoService {
         },
       );
     }
-
-    await this.prisma.video.delete({ where: { id } });
   }
 }

@@ -1,33 +1,39 @@
 import {
-  Controller,
-  UploadedFiles,
-  UseInterceptors,
-  Res,
-  Req,
+  BadRequestException,
   Body,
-  Get,
-  Put,
-  Post,
+  Controller,
   Delete,
+  Get,
   HttpCode,
+  NotFoundException,
   Param,
+  ParseFilePipe,
+  Patch,
+  Post,
   Query,
+  Redirect,
+  Req,
+  Res,
+  UnauthorizedException,
+  UploadedFile,
+  UploadedFiles,
   UseFilters,
   UseGuards,
-  BadRequestException,
-  UnauthorizedException,
-  NotFoundException,
-  Redirect,
+  UseInterceptors,
 } from '@nestjs/common';
-import { VideoService } from './video.service';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { PostVideoDto } from './dto/post-video.dto';
-import { PrismaClientExceptionFilter } from '../prisma-client-exception/prisma-client-exception.filter';
-import { AccessTokenGuard } from '../auth/guards/acces-token.guard';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { Request } from 'express';
-import { PrismaService } from '../prisma/prisma.service';
+import * as fs from 'fs/promises';
+import { join } from 'path';
+import { AccessTokenGuard } from '../auth/guards/acces-token.guard';
 import { FirebaseService } from '../firebase/firebase.service';
-import { readFileSync } from 'fs';
+import { PrismaClientExceptionFilter } from '../prisma-client-exception/prisma-client-exception.filter';
+import { PrismaService } from '../prisma/prisma.service';
+import { UpdateVideoDto } from './dto/update-video.dto';
+import { VideoService } from './video.service';
 
 @Controller('video')
 @UseFilters(PrismaClientExceptionFilter)
@@ -38,7 +44,71 @@ export class VideoController {
     private firebase: FirebaseService,
   ) {}
 
-  @Get('/cover/:filename')
+  @Patch(':id')
+  @UseInterceptors(FileInterceptor('cover'))
+  async update(
+    @Param('id') id: string,
+    @Body() updateVideo: UpdateVideoDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+      }),
+    )
+    file?: Express.Multer.File,
+  ) {
+    if (file) {
+      const video = await this.prisma.video.findUnique({
+        where: { id },
+        select: { coverImage: true },
+      });
+
+      if (!video) {
+        throw new NotFoundException(`No video with given ID : ${id}`);
+      }
+
+      await this.prisma.video.update({
+        where: { id },
+        data: {
+          coverImage: file.filename,
+        },
+      });
+
+      // upload new file
+
+      const cover = await fs.readFile(file.path);
+      await this.firebase.upload(cover, `datas/videos/${file.filename}`);
+
+      // remove old file
+
+      try {
+        const coverPath = join(
+          __dirname,
+          '../..',
+          `public/datas/videos/${video.coverImage}`,
+        );
+        await fs.rm(coverPath);
+      } catch {
+        console.error(`Image file ${video.coverImage} doesn't exist`);
+      }
+
+      await this.firebase.delete(`datas/videos/${video.coverImage}`);
+    }
+
+    if (updateVideo.title) {
+      await this.prisma.video.update({
+        where: {
+          id,
+        },
+        data: {
+          title: updateVideo.title,
+        },
+      });
+    }
+
+    return 'Video record updated';
+  }
+
+  @Get('cover/:filename')
   @Redirect()
   async getCoverFile(@Param('filename') filename: string) {
     return {
@@ -46,7 +116,7 @@ export class VideoController {
     };
   }
 
-  @Get('/a')
+  @Get('a')
   @UseGuards(AccessTokenGuard)
   async readVideos(@Query('user') userId?: string) {
     if (userId) {
@@ -85,7 +155,7 @@ export class VideoController {
     });
   }
 
-  @Get('/:id')
+  @Get(':id')
   stream(@Param('id') id: string, @Res() res, @Req() req) {
     return this.videoService.streamVideo(id, res, req);
   }
@@ -120,13 +190,7 @@ export class VideoController {
     });
   }
 
-  @Put('/:id')
-  @UseGuards(AccessTokenGuard)
-  update(@Param('id') id: string, @Body() video: PostVideoDto) {
-    return this.videoService.update(id, video);
-  }
-
-  @Delete('/:id')
+  @Delete(':id')
   @HttpCode(200)
   @UseGuards(AccessTokenGuard)
   async delete(@Req() req: Request, @Param('id') id: string) {
@@ -173,13 +237,13 @@ export class VideoController {
     {
       // Upload files
 
-      const video = readFileSync(files.video[0].path);
+      const video = await fs.readFile(files.video[0].path);
       await this.firebase.upload(
         video,
         `datas/videos/${files.video[0].filename}`,
       );
 
-      const cover = readFileSync(files.cover[0].path);
+      const cover = await fs.readFile(files.cover[0].path);
       await this.firebase.upload(
         cover,
         `datas/videos/${files.cover[0].filename}`,

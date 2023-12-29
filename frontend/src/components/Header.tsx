@@ -1,13 +1,15 @@
-import { keyframes, styled } from "styled-components";
-import { FiSearch } from "react-icons/fi";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { rgba, transparentize } from "polished";
+import { useContext, useEffect, useState } from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
+import { BiMenuAltLeft } from "react-icons/bi";
+import { FiSearch } from "react-icons/fi";
 import { GoBell } from "react-icons/go";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useContext, useState } from "react";
-import { rgba } from "polished";
-import ThemeContext from "../contexts/theme";
+import { keyframes, styled } from "styled-components";
 import api from "../api";
+import ThemeContext from "../contexts/theme";
+import themes from "../styles/themes";
 
 const appears = keyframes`
   from {
@@ -31,13 +33,36 @@ const nameAppears = keyframes`
 
 const Container = styled.nav`
   display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
   justify-content: space-between;
-  padding-top: 1.75rem;
+  padding-top: 1rem;
 
   .left {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
     margin-left: 2rem;
+
+    @media (max-width: ${themes.screen.l}) {
+      display: none;
+    }
+  }
+
+  .menu-btn {
+    all: unset;
+    display: none;
+    margin-left: 1.25rem;
+    outline: 2px solid
+      ${({ theme }) => transparentize(0.75, theme.colors.primary)};
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.5rem;
+    border-radius: 5px;
+
+    @media (max-width: ${themes.screen.m}) {
+      display: grid;
+      place-items: center;
+    }
   }
 
   .right {
@@ -153,6 +178,10 @@ const Container = styled.nav`
       font-weight: bold;
       margin-left: 0.5rem;
       animation: ${nameAppears} 500ms 750ms both;
+
+      @media (max-width: ${themes.screen.m}) {
+        display: none;
+      }
     }
   }
 
@@ -172,7 +201,7 @@ const Container = styled.nav`
   }
 `;
 
-function Header() {
+function Header({ showSidebar }: { showSidebar: () => void }) {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useContext(ThemeContext);
 
@@ -213,22 +242,6 @@ function Header() {
 
   return (
     <Container>
-      <div className="left">
-        <div className="buttons">
-          <button disabled>
-            <IoIosArrowBack />
-          </button>
-          <button>
-            <IoIosArrowForward />
-          </button>
-        </div>
-        <div className="searchbar">
-          <label htmlFor="search-input">
-            <FiSearch />
-          </label>
-          <input type="text" id="search-input" placeholder="Search video..." />
-        </div>
-      </div>
       <div className="right">
         <button>
           <GoBell />
@@ -248,6 +261,25 @@ function Header() {
           </div>
         </div>
       </div>
+      <div className="left">
+        <div className="buttons">
+          <button disabled>
+            <IoIosArrowBack />
+          </button>
+          <button>
+            <IoIosArrowForward />
+          </button>
+        </div>
+        <div className="searchbar">
+          <label htmlFor="search-input">
+            <FiSearch />
+          </label>
+          <input type="text" id="search-input" placeholder="Search video..." />
+        </div>
+      </div>
+      <button className="menu-btn" onClick={showSidebar}>
+        <BiMenuAltLeft />
+      </button>
     </Container>
   );
 }
