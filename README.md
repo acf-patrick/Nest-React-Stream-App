@@ -19,7 +19,7 @@ Basically this application allows user to post and stream videos.
 - [x] User authentication 🧍
 - [x] Mailing for forgotten password cases 🔐
 - [x] Media storage with Firebase 🔥
-- [ ] Responsiveness
+- [x] Responsiveness
 - [ ] Search algorithm
 - [ ] Navigation buttons (⬅️ | ➡️)
 

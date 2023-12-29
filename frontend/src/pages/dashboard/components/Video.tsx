@@ -181,6 +181,22 @@ function transformDate(date: Date) {
   }
 }
 
+function VideoPlayer({
+  videoRef,
+  videoId,
+}: {
+  videoRef: React.RefObject<HTMLVideoElement>;
+  videoId: string;
+}) {
+  return (
+    <StyledPlayer>
+      <video autoPlay ref={videoRef} muted controls>
+        <source src={`${import.meta.env.VITE_API_ENDPOINT}/video/${videoId}`} />
+      </video>
+    </StyledPlayer>
+  );
+}
+
 export default function Video() {
   const { id } = useParams();
   const video = useVideo(id!);
@@ -266,25 +282,13 @@ export default function Video() {
       {playerContainer &&
         !showInnerPlayer &&
         createPortal(
-          <StyledPlayer>
-            <video autoPlay controls ref={videoRef}>
-              <source
-                src={`${import.meta.env.VITE_API_ENDPOINT}/video/${video.id}`}
-              />
-            </video>
-          </StyledPlayer>,
+          <VideoPlayer videoRef={videoRef} videoId={video.id} />,
           playerContainer
         )}
       <StyledVideoContainer ref={containerRef}>
         <div>
           {showInnerPlayer && (
-            <StyledPlayer>
-              <video autoPlay controls ref={videoRef}>
-                <source
-                  src={`${import.meta.env.VITE_API_ENDPOINT}/video/${video.id}`}
-                />
-              </video>
-            </StyledPlayer>
+            <VideoPlayer videoRef={videoRef} videoId={video.id} />
           )}
           <h1>
             {video.title.length > 64
