@@ -6,6 +6,8 @@ import { styled } from "styled-components";
 import { darken, lighten, transparentize } from "polished";
 import { VideoListItem } from "../../../components";
 import api from "../../../api";
+import themes from "../../../styles/themes";
+import { createPortal } from "react-dom";
 
 const StyledNotFound = styled.div`
   margin-top: 10rem;
@@ -16,20 +18,22 @@ const StyledNotFound = styled.div`
   gap: 2rem;
 `;
 
-const StyledVideoContainer = styled.div`
-  margin-top: 2rem;
-  padding-right: 2rem;
-  display: flex;
-  gap: 2rem;
+const StyledPlayer = styled.div`
+  display: grid;
+  place-items: center;
+  min-height: 240px;
+  background: ${({ theme }) => theme.colors.background};
 
-  & > div:first-of-type {
-    flex-grow: 1;
-  }
+  @media (max-width: ${themes.screen.s}) {
+    margin-top: 1rem;
+    border-bottom: 1px solid
+      ${({ theme }) => transparentize(0.5, theme.colors.primary)};
 
-  h1 {
-    letter-spacing: normal !important;
-    font-weight: bold !important;
-    margin: 1rem 0 0;
+    video {
+      height: 100%;
+      border-radius: unset !important;
+      box-shadow: unset !important;
+    }
   }
 
   video {
@@ -42,11 +46,31 @@ const StyledVideoContainer = styled.div`
           ? darken(0.5, theme.colors.background)
           : lighten(0.25, theme.colors.background)};
   }
+`;
 
-  .player {
-    display: grid;
-    place-items: center;
-    min-height: 360px;
+const StyledVideoContainer = styled.div`
+  margin-top: 2rem;
+  padding-right: 2rem;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+
+  @media (max-width: ${themes.screen.s}) {
+    margin-top: 0;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  & > div:first-of-type {
+    flex-grow: 1;
+  }
+
+  h1 {
+    letter-spacing: normal !important;
+    font-weight: bold !important;
+    margin: 1rem 0 0;
   }
 
   .upload-date {
@@ -56,9 +80,13 @@ const StyledVideoContainer = styled.div`
   }
 
   .more {
-    width: 360px;
+    max-width: 360px;
     max-height: calc(100vh - 180px);
     overflow-y: auto;
+
+    @media (max-width: ${themes.screen.s}) {
+      max-height: unset;
+    }
 
     &:hover {
       &::-webkit-scrollbar-thumb {
@@ -98,6 +126,10 @@ const StyledVideoContainer = styled.div`
 
     .name {
       font-size: 1.5rem;
+
+      @media (max-width: ${themes.screen.s}) {
+        font-size: 1.25rem;
+      }
     }
   }
 `;
@@ -109,6 +141,11 @@ const StyledUserPicture = styled.div<{ $src: string }>`
   overflow: hidden;
   padding: 2px;
   outline: 2px solid ${({ theme }) => theme.colors.quaternary};
+
+  @media (max-width: ${themes.screen.s}) {
+    width: 48px;
+    height: 48px;
+  }
 
   div {
     width: 100%;
@@ -150,12 +187,22 @@ export default function Video() {
   const moreVideos = useVideos(
     video ? `/video/a?user=${video.userId}` : ""
   ).videos;
+
+  // true only for non-small screen devices
+  const [showInnerPlayer, setShowInnerPlayer] = useState(
+    screen.width > parseInt(themes.screen.s)
+  );
+
   const [user, setUser] = useState<{
     name: string;
     avatar: string;
   } | null>(null);
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // video player outlet for smaller devices
+  const playerContainer = document.querySelector("#player-container");
 
   const uploadDate = useMemo(() => {
     if (!video) {
@@ -163,6 +210,15 @@ export default function Video() {
     }
     return transformDate(video.uploadDate);
   }, [video]);
+
+  useEffect(() => {
+    const cb = () => {
+      setShowInnerPlayer(window.innerWidth > parseInt(themes.screen.s));
+    };
+    window.addEventListener("resize", cb);
+
+    return () => window.removeEventListener("resize", cb);
+  }, []);
 
   useEffect(() => {
     if (!video) {
@@ -206,59 +262,75 @@ export default function Video() {
   }
 
   return (
-    <StyledVideoContainer>
-      <div>
-        <div className="player">
-          <video controls autoPlay ref={videoRef}>
-            <source
-              src={`${import.meta.env.VITE_API_ENDPOINT}/video/${video.id}`}
-            />
-          </video>
+    <>
+      {playerContainer &&
+        !showInnerPlayer &&
+        createPortal(
+          <StyledPlayer>
+            <video autoPlay controls ref={videoRef}>
+              <source
+                src={`${import.meta.env.VITE_API_ENDPOINT}/video/${video.id}`}
+              />
+            </video>
+          </StyledPlayer>,
+          playerContainer
+        )}
+      <StyledVideoContainer ref={containerRef}>
+        <div>
+          {showInnerPlayer && (
+            <StyledPlayer>
+              <video autoPlay controls ref={videoRef}>
+                <source
+                  src={`${import.meta.env.VITE_API_ENDPOINT}/video/${video.id}`}
+                />
+              </video>
+            </StyledPlayer>
+          )}
+          <h1>
+            {video.title.length > 64
+              ? video.title.slice(0, 64) + "..."
+              : video.title}
+          </h1>
+          <div className="upload-date">{uploadDate}</div>
+          {user && (
+            <div className="user">
+              <StyledUserPicture
+                $src={user.avatar ? user.avatar : "/images/profile-pic.png"}
+              >
+                <div></div>
+              </StyledUserPicture>
+              <div className="name">{user.name}</div>
+            </div>
+          )}
         </div>
-        <h1>
-          {video.title.length > 64
-            ? video.title.slice(0, 64) + "..."
-            : video.title}
-        </h1>
-        <div className="upload-date">{uploadDate}</div>
-        {user && (
-          <div className="user">
-            <StyledUserPicture
-              $src={user.avatar ? user.avatar : "/images/profile-pic.png"}
-            >
-              <div></div>
-            </StyledUserPicture>
-            <div className="name">{user.name}</div>
+        {moreVideos && moreVideos.length > 1 && (
+          <div>
+            <div className="more">
+              <ul>
+                {moreVideos.map((video, i) => {
+                  return video.id !== id ? (
+                    <li key={i}>
+                      <VideoListItem
+                        id={video.id}
+                        cover={`${
+                          import.meta.env.VITE_API_ENDPOINT
+                        }/video/cover/${video.coverImage}`}
+                        title={video.title}
+                        uploader={user ? user.name : ""}
+                        uploadDate={transformDate(video.uploadDate)}
+                      />
+                    </li>
+                  ) : null;
+                })}
+              </ul>
+            </div>
+            <p>
+              {moreVideos.length - 1} other video
+              {moreVideos.length > 2 ? "s" : ""} found ✨
+            </p>
           </div>
         )}
-      </div>
-      {moreVideos && moreVideos.length > 1 && (
-        <div>
-          <div className="more">
-            <ul>
-              {moreVideos.map((video, i) => {
-                return video.id !== id ? (
-                  <li key={i}>
-                    <VideoListItem
-                      id={video.id}
-                      cover={`${
-                        import.meta.env.VITE_API_ENDPOINT
-                      }/video/cover/${video.coverImage}`}
-                      title={video.title}
-                      uploader={user ? user.name : ""}
-                      uploadDate={transformDate(video.uploadDate)}
-                    />
-                  </li>
-                ) : null;
-              })}
-            </ul>
-          </div>
-          <p>
-            {moreVideos.length - 1} other video
-            {moreVideos.length > 2 ? "s" : ""} found ✨
-          </p>
-        </div>
-      )}
-    </StyledVideoContainer>
+      </StyledVideoContainer>
+    </>
   );
 }

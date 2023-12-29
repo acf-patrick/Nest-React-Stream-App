@@ -21,6 +21,7 @@ const Card = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
+  position: relative;
 
   @media (max-width: ${themes.screen.s}) {
     margin: 0 auto;

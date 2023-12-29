@@ -95,6 +95,7 @@ function Dashboard() {
       <Sidebar show={showSidebar} hide={() => setShowSidebar(false)} />
       <main>
         <Header showSidebar={() => setShowSidebar(true)} />
+        <div id="player-container"></div>
         <div className="outlet">
           <Outlet />
         </div>

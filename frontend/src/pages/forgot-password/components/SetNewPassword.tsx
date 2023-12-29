@@ -1,14 +1,34 @@
-import { BsArrowLeft } from "react-icons/bs";
 import { useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { AiOutlineLoading } from "react-icons/ai";
+import { BsArrowLeft } from "react-icons/bs";
 import { MdOutlinePassword } from "react-icons/md";
-import { styled } from "styled-components";
-import Icon from "./Icon";
-import Title from "./Title";
-import Button from "./Button";
-import Pagination from "./Pagination";
-import { Input } from "../../../components";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { keyframes, styled } from "styled-components";
 import api from "../../../api";
+import { Input } from "../../../components";
+import Button from "./Button";
+import Icon from "./Icon";
+import Pagination from "./Pagination";
+import Title from "./Title";
+
+const spin = keyframes`
+from {
+  transform: rotate(0deg);
+} to {
+  transform: rotate(360deg);
+}
+`;
+
+const StyledButton = styled(Button)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  svg {
+    animation: ${spin} 500ms infinite;
+  }
+`;
 
 const Form = styled.form`
   display: flex;
@@ -54,16 +74,36 @@ const Form = styled.form`
 
 function SetNewPassword() {
   const location = useLocation();
-  const [code, _] = useState<string>(location.state?.code);
   const [error, setError] = useState("");
+  const [processing, setProcessing] = useState(false);
+
+  const navigate = useNavigate();
+  const code: string | undefined = location.state?.code;
 
   const formOnSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    api.post("/user/password", {
-      code,
-      password: data.get("password"),
-    });
+
+    setProcessing(true);
+    api
+      .post("/user/password", {
+        code,
+        password: data.get("password"),
+      })
+      .then(() => {
+        navigate("/login");
+      })
+      .catch((err) => {
+        console.log({
+          status: err.response.status,
+        });
+        if (err.response.status === 400 || err.response.status === 403) {
+          setError("Can not set password, invalid code provided.");
+        } else {
+          setError("Unable to set password, an error occured.");
+        }
+      })
+      .finally(() => setProcessing(false));
   };
 
   return (
@@ -73,7 +113,7 @@ function SetNewPassword() {
       </Icon>
       <Title>Set new password</Title>
       <Form onSubmit={formOnSubmit}>
-        <div className="error">{error && <p>Passwords don't match</p>}</div>
+        <div className="error">{error.length > 0 && <p>{error}</p>}</div>
         <Input
           label="Password"
           name="password"
@@ -102,7 +142,10 @@ function SetNewPassword() {
             }
           }}
         />
-        <Button type="submit">Reset password </Button>
+        <StyledButton type="submit" disabled={processing}>
+          <span>Reset password</span>
+          {processing && <AiOutlineLoading />}
+        </StyledButton>
         <p className="back">
           <BsArrowLeft />
           <Link to="/">

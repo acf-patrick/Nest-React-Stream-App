@@ -2,6 +2,7 @@ import { transparentize, darken, lighten } from "polished";
 import { styled } from "styled-components";
 import { AiOutlineClockCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import themes from "../styles/themes";
 
 type VideoProps = {
   id: string;
@@ -52,6 +53,10 @@ const StyledItem = styled.div<{ $cover: string }>`
       overflow: hidden;
       text-overflow: ellipsis;
       font-weight: bold;
+
+      @media (max-width: ${themes.screen.s}) {
+        font-size: 0.9rem;
+      }
     }
 
     .uploader {

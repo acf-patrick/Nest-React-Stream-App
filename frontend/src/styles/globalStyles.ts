@@ -25,6 +25,11 @@ a {
   text-decoration: none;
 }
 
+#player-container {
+  position: sticky;
+  top: 0;
+}
+
 `;
 
 export default GlobalStyle;
